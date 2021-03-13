@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.kpi.spring-labs</groupId>
-    <artifactId>commodity-turnover</artifactId>
+    <artifactId>warehouse-inventory-system</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Commodity Turnover</name>
+    <name>warehouse-inventory-system</name>
     <description>Education Project</description>
 
     <packaging>pom</packaging>
