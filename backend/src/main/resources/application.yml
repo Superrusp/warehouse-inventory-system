@@ -2,3 +2,15 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,
       org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+logging:
+  level:
+    org.springframework: ERROR
+    com.kpi: DEBUG
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}) [%t] %clr(%-5level) %clr(%logger{36}){yellow} - %msg%n"
+    file: "%d %p %c{1.} [%t] %m%n"
+  file:
+    name: app.log
+  logback:
+    rollingpolicy:
+      max-file-size: 200KB
