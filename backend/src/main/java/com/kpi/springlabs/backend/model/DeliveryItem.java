@@ -13,8 +13,7 @@ public class DeliveryItem extends BaseEntity {
     private DeliveryRequest deliveryRequest;
     private String deliveryStatus;
 
-    public DeliveryItem(long id, Goods goods, DeliveryRequest deliveryRequest,
-                        String deliveryStatus) {
+    public DeliveryItem(long id, Goods goods, DeliveryRequest deliveryRequest, String deliveryStatus) {
         super(id);
         this.goods = goods;
         this.deliveryRequest = deliveryRequest;

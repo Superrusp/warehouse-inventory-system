@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public class BaseEntity {
+public abstract class BaseEntity {
 
     private final long id;
 }

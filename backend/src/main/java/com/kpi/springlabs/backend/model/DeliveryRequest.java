@@ -13,14 +13,14 @@ import java.util.List;
 public class DeliveryRequest extends BaseEntity {
 
     private List<Goods> goods;
+    private Warehouse warehouse;
     private Shop shop;
     private LocalDate requestDate;
     private LocalDate arrivalDate;
 
-    public DeliveryRequest(long id, List<Goods> goods, Shop shop, LocalDate requestDate, LocalDate arrivalDate) {
+    public DeliveryRequest(long id, List<Goods> goods, LocalDate requestDate, LocalDate arrivalDate) {
         super(id);
         this.goods = goods;
-        this.shop = shop;
         this.requestDate = requestDate;
         this.arrivalDate = arrivalDate;
     }
