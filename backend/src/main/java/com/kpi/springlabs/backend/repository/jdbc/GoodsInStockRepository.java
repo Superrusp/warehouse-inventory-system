@@ -1,4 +1,4 @@
-package com.kpi.springlabs.backend.repository;
+package com.kpi.springlabs.backend.repository.jdbc;
 
 import com.kpi.springlabs.backend.model.GoodsInStock;
 
