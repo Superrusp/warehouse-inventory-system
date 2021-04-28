@@ -1,53 +1,54 @@
 package com.kpi.springlabs.backend.controller;
 
 import com.kpi.springlabs.backend.model.DeliveryItem;
-import com.kpi.springlabs.backend.repository.impl.DeliveryItemRepository;
+import com.kpi.springlabs.backend.service.DeliveryItemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/delivery-items")
+@RequestMapping("api/delivery-items")
 @Slf4j
 public class DeliveryItemController {
 
-    private final DeliveryItemRepository deliveryItemRepository;
+    @Autowired
+    private final DeliveryItemService deliveryItemService;
 
     @Autowired
-    public DeliveryItemController(DeliveryItemRepository deliveryItemRepository) {
-        this.deliveryItemRepository = deliveryItemRepository;
+    public DeliveryItemController(DeliveryItemService deliveryItemService) {
+        this.deliveryItemService = deliveryItemService;
     }
 
     @GetMapping
     public ResponseEntity<?> loadAllDeliveryItems() {
         LOG.debug("Request all delivery items");
-        return ResponseEntity.ok(deliveryItemRepository.getAll());
+        return ResponseEntity.ok(deliveryItemService.getDeliveryItems());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDeliveryItem(@PathVariable long id) {
         LOG.debug("Request special delivery item");
-        return ResponseEntity.ok(deliveryItemRepository.getById(id));
+        return ResponseEntity.ok(deliveryItemService.getDeliveryItemById(id));
     }
 
     @PostMapping
     public ResponseEntity<?> createDeliveryItem(@RequestBody DeliveryItem deliveryItem) {
         LOG.debug("Request delivery item creation");
-        return ResponseEntity.ok(deliveryItemRepository.insert(deliveryItem));
+        return ResponseEntity.ok(deliveryItemService.createDeliveryItem(deliveryItem));
     }
 
     @PutMapping
     public ResponseEntity<?> updateDeliveryItem(@RequestBody DeliveryItem deliveryItem) {
         LOG.debug("Request delivery item update");
-        deliveryItemRepository.update(deliveryItem);
+        deliveryItemService.updateDeliveryItem(deliveryItem);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDeliveryItem(@PathVariable long id) {
         LOG.debug("Request delivery item deletion");
-        deliveryItemRepository.delete(id);
+        deliveryItemService.deleteDeliveryItem(id);
         return ResponseEntity.ok().build();
     }
 }
