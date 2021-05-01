@@ -1,12 +1,18 @@
 package com.kpi.springlabs.backend.model;
 
 
+import com.kpi.springlabs.backend.utils.Constants;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Entity;
+
+@Entity(name = Constants.TableNames.GOODS)
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString(callSuper = true)
 public class Goods extends BaseEntity {
 
