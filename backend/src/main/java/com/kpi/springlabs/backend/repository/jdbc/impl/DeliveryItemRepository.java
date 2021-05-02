@@ -35,11 +35,6 @@ public class DeliveryItemRepository extends BaseRepositoryImpl<DeliveryItem> {
     }
 
     @Override
-    protected String getPrimaryKeyName() {
-        return Constants.PrimaryKeys.DELIVERY_ITEM_ID;
-    }
-
-    @Override
     protected DeliveryItem getMappedEntity(ResultSet resultSet) throws SQLException {
         long id = resultSet.getLong(1);
         long goodsId = resultSet.getLong(2);
@@ -64,7 +59,7 @@ public class DeliveryItemRepository extends BaseRepositoryImpl<DeliveryItem> {
         if (SqlOperationType.INSERT == sqlOperationType) {
             query = "INSERT INTO delivery_items (goods_id, delivery_request_id, delivery_status) VALUES (?, ?, ?)";
         } else {
-            query = "UPDATE delivery_items SET goods_id = ?, delivery_request_id = ?, delivery_status = ? WHERE delivery_item_id = ?";
+            query = "UPDATE delivery_items SET goods_id = ?, delivery_request_id = ?, delivery_status = ? WHERE id = ?";
         }
 
         Connection connection = jdbcTemplateUtils.getConnection();

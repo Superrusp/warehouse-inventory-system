@@ -78,7 +78,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
     @Override
     public Optional<DeliveryRequest> getById(long deliveryRequestId) {
         LOG.debug("Getting delivery request by id: {}", deliveryRequestId);
-        String query = "SELECT * FROM delivery_requests WHERE delivery_request_id = ?";
+        String query = "SELECT * FROM delivery_requests WHERE id = ?";
 
         ResultSet resultSet = null;
         PreparedStatement statement = null;
@@ -185,7 +185,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
         try {
             LOG.debug("Updating delivery_requests");
             String query = "UPDATE delivery_requests SET warehouse_id = ?, shop_id = ?, request_date = ?, arrival_date = ? " +
-                    "WHERE delivery_request_id = ?";
+                    "WHERE id = ?";
             connection1 = jdbcTemplateUtils.getConnection();
             statement1 = connection1.prepareStatement(query);
 
@@ -248,7 +248,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
             statement1.executeUpdate();
             connection.commit();
 
-            statement2 = connection.prepareStatement("DELETE FROM delivery_requests WHERE delivery_request_id = ?");
+            statement2 = connection.prepareStatement("DELETE FROM delivery_requests WHERE id = ?");
             statement2.setLong(1, id);
             statement2.executeUpdate();
             connection.commit();
@@ -267,7 +267,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
         Connection connection = null;
         ResultSet resultSet = null;
         try {
-            String query = "SELECT * FROM delivery_requests WHERE delivery_request_id = ?";
+            String query = "SELECT * FROM delivery_requests WHERE id = ?";
             connection = jdbcTemplateUtils.getConnection();
             statement = connection.prepareStatement(query);
 

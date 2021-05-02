@@ -21,11 +21,6 @@ public class GoodsRepositoryImpl extends BaseRepositoryImpl<Goods> {
     }
 
     @Override
-    protected String getPrimaryKeyName() {
-        return Constants.PrimaryKeys.GOODS_ID;
-    }
-
-    @Override
     protected Goods getMappedEntity(ResultSet resultSet) throws SQLException {
         long id = resultSet.getLong(1);
         String name = resultSet.getString(2);
@@ -40,7 +35,7 @@ public class GoodsRepositoryImpl extends BaseRepositoryImpl<Goods> {
         if (SqlOperationType.INSERT == sqlOperationType) {
             query = "INSERT INTO goods (name, description, price) VALUES (?, ?, ?)";
         } else {
-            query = "UPDATE goods SET name = ?, description = ?, price = ? WHERE goods_id = ?";
+            query = "UPDATE goods SET name = ?, description = ?, price = ? WHERE id = ?";
         }
         Connection connection = jdbcTemplateUtils.getConnection();
         PreparedStatement statement = connection.prepareStatement(query);

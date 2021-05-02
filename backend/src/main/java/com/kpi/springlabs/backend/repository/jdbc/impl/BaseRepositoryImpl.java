@@ -22,8 +22,6 @@ public abstract class BaseRepositoryImpl<T extends BaseEntity> implements BaseRe
 
     protected abstract String getTableName();
 
-    protected abstract String getPrimaryKeyName();
-
     protected abstract T getMappedEntity(ResultSet resultSet) throws SQLException;
 
     protected abstract PreparedStatement getPreparedStatementForSqlOperation(T entity, SqlOperationType sqlOperationType) throws SQLException;
@@ -61,7 +59,7 @@ public abstract class BaseRepositoryImpl<T extends BaseEntity> implements BaseRe
     @Override
     public Optional<T> getById(long id) {
         LOG.debug("Getting element by id: {} in {}", id, this.getClass().getName());
-        String query = String.format("SELECT * FROM %s WHERE %s = ?", getTableName(), getPrimaryKeyName());
+        String query = String.format("SELECT * FROM %s WHERE id = ?", getTableName());
 
         ResultSet resultSet = null;
         PreparedStatement statement = null;
@@ -127,7 +125,7 @@ public abstract class BaseRepositoryImpl<T extends BaseEntity> implements BaseRe
     @Override
     public void delete(long id) {
         LOG.debug("Deleting element by id {} in {}", id, this.getClass().getName());
-        String query = String.format("DELETE FROM %s WHERE %s = ?", getTableName(), getPrimaryKeyName());
+        String query = String.format("DELETE FROM %s WHERE id = ?", getTableName());
 
         Connection connection = null;
         PreparedStatement statement = null;
@@ -153,7 +151,7 @@ public abstract class BaseRepositoryImpl<T extends BaseEntity> implements BaseRe
         Connection connection = null;
         ResultSet resultSet = null;
         try {
-            String query = String.format("SELECT * FROM %s WHERE %s = ?", getTableName(), getPrimaryKeyName());
+            String query = String.format("SELECT * FROM %s WHERE id = ?", getTableName());
             connection = jdbcTemplateUtils.getConnection();
             statement = connection.prepareStatement(query);
 

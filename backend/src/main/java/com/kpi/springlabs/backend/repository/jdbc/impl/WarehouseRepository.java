@@ -19,11 +19,6 @@ public class WarehouseRepository extends BaseRepositoryImpl<Warehouse> {
     }
 
     @Override
-    protected String getPrimaryKeyName() {
-        return Constants.PrimaryKeys.WAREHOUSE_ID;
-    }
-
-    @Override
     protected Warehouse getMappedEntity(ResultSet resultSet) throws SQLException {
         long id = resultSet.getLong(1);
         String name = resultSet.getString(2);
@@ -36,7 +31,7 @@ public class WarehouseRepository extends BaseRepositoryImpl<Warehouse> {
         if (SqlOperationType.INSERT == sqlOperationType) {
             query = "INSERT INTO warehouses (name) VALUES (?)";
         } else {
-            query = "UPDATE warehouses SET name = ? WHERE warehouse_id = ?";
+            query = "UPDATE warehouses SET name = ? WHERE id = ?";
         }
 
         Connection connection = jdbcTemplateUtils.getConnection();
