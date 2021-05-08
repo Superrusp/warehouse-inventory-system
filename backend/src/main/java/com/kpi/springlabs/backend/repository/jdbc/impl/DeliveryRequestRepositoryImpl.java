@@ -12,9 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -54,7 +52,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
                 LocalDate requestDate = resultSet.getDate(4).toLocalDate();
                 LocalDate arrivalDate = resultSet.getDate(5).toLocalDate();
 
-                List<Goods> goods = getGoodsOfDeliveryRequest(id);
+                Set<Goods> goods = getGoodsOfDeliveryRequest(id);
                 Optional<Shop> shop = shopRepository.getById(shopId);
                 Optional<Warehouse> warehouse = warehouseRepository.getById(warehouseId);
 
@@ -96,7 +94,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
                 LocalDate requestDate = resultSet.getDate(4).toLocalDate();
                 LocalDate arrivalDate = resultSet.getDate(5).toLocalDate();
 
-                List<Goods> goods = getGoodsOfDeliveryRequest(id);
+                Set<Goods> goods = getGoodsOfDeliveryRequest(id);
                 Optional<Shop> shop = shopRepository.getById(shopId);
                 Optional<Warehouse> warehouse = warehouseRepository.getById(warehouseId);
 
@@ -154,7 +152,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
                 LOG.debug("Inserting into delivery_request_goods");
                 connection2 = jdbcTemplateUtils.getConnection();
                 statement2 = connection2.prepareStatement("INSERT INTO delivery_request_goods (delivery_request_id, goods_id) VALUES (?, ?)");
-                List<Goods> goodsDeliveryRequest = deliveryRequest.getGoods();
+                Set<Goods> goodsDeliveryRequest = deliveryRequest.getGoods();
                 for (Goods goods : goodsDeliveryRequest) {
                     statement2.setLong(1, generatedKeys.getLong(1));
                     statement2.setLong(2, goods.getId());
@@ -214,7 +212,7 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
             LOG.debug("Updating delivery_request_goods");
             connection2 = jdbcTemplateUtils.getConnection();
             statement2 = connection2.prepareStatement("INSERT INTO delivery_request_goods (delivery_request_id, goods_id) VALUES (?, ?)");
-            List<Goods> goodsDeliveryRequest = deliveryRequest.getGoods();
+            Set<Goods> goodsDeliveryRequest = deliveryRequest.getGoods();
             for (Goods goods : goodsDeliveryRequest) {
                 if (!existsGoodsInDeliveryRequest(deliveryRequest.getId(), goods.getId())) {
                     statement2.setLong(1, deliveryRequest.getId());
@@ -290,9 +288,9 @@ public class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository 
 
     }
 
-    protected List<Goods> getGoodsOfDeliveryRequest(long deliveryRequestId) {
+    protected Set<Goods> getGoodsOfDeliveryRequest(long deliveryRequestId) {
         LOG.debug("Getting all goods in delivery request(id = {})", deliveryRequestId);
-        List<Goods> allGoodsDeliveryRequest = new ArrayList<>();
+        Set<Goods> allGoodsDeliveryRequest = new HashSet<>();
         String query = "SELECT goods_id FROM delivery_request_goods WHERE delivery_request_id = ?";
 
         ResultSet resultSet = null;

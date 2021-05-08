@@ -9,6 +9,7 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Entity(name = Constants.TableNames.GOODS_IN_STOCKS)
+@SequenceGenerator(name = "base_sequence", sequenceName = "goods_in_stocks_sequence", allocationSize = 1)
 @Setter
 @Getter
 @NoArgsConstructor
@@ -16,14 +17,14 @@ import javax.persistence.*;
 public class GoodsInStock extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "goods_id")
+    @JoinColumn(name = "goods_id", nullable = false)
     private Goods goods;
 
     @ManyToOne
-    @JoinColumn(name = "warehouse_id")
+    @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
 
-    @Column(name = "available_quantity")
+    @Column(nullable = false, columnDefinition = "NUMBER(5)")
     private int availableQuantity;
 
     public GoodsInStock(long id, Goods goods, Warehouse warehouse, int availableQuantity) {
