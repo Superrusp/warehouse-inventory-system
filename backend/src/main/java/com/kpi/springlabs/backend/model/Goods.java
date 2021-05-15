@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
 
 
 @Entity(name = Constants.TableNames.GOODS)
+@Table(indexes = @Index(name = "IDX_goods_name", columnList = "id, name"))
 @SequenceGenerator(name = "base_sequence", sequenceName = "goods_sequence", allocationSize = 1)
 @Getter
 @Setter
