@@ -1,5 +1,6 @@
 package com.kpi.springlabs.backend.controller;
 
+import com.kpi.springlabs.backend.aop.TrackExecutionTime;
 import com.kpi.springlabs.backend.model.DeliveryItem;
 import com.kpi.springlabs.backend.service.DeliveryItemService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,13 @@ public class DeliveryItemController {
     public ResponseEntity<?> getDeliveryItem(@PathVariable long id) {
         LOG.debug("Request special delivery item");
         return ResponseEntity.ok(deliveryItemService.getDeliveryItemById(id));
+    }
+
+    @GetMapping("/search")
+    @TrackExecutionTime
+    public ResponseEntity<?> getDeliveryItemByDeliveryStatus(@RequestParam String deliveryStatus) {
+        LOG.debug("Request delivery items by delivery status");
+        return ResponseEntity.ok(deliveryItemService.getDeliveryItemByDeliveryStatus(deliveryStatus));
     }
 
     @PostMapping

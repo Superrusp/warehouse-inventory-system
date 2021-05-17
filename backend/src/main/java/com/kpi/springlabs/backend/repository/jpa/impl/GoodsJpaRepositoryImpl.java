@@ -1,7 +1,9 @@
 package com.kpi.springlabs.backend.repository.jpa.impl;
 
+import com.kpi.springlabs.backend.aop.TrackExecutionTime;
 import com.kpi.springlabs.backend.model.Goods;
-import com.kpi.springlabs.backend.repository.jpa.JpaBaseRepository;
+import com.kpi.springlabs.backend.model.dto.GoodsDto;
+import com.kpi.springlabs.backend.repository.jpa.GoodsJpaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 @Slf4j
-public class GoodsJpaRepositoryImpl implements JpaBaseRepository<Goods> {
+public class GoodsJpaRepositoryImpl implements GoodsJpaRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -57,5 +59,18 @@ public class GoodsJpaRepositoryImpl implements JpaBaseRepository<Goods> {
         LOG.debug("Call query for checking if exists Goods(id = {})", id);
         Goods goods = entityManager.find(Goods.class, id);
         return goods != null;
+    }
+
+    @Override
+    @TrackExecutionTime
+    public Optional<GoodsDto> findByName(String name) {
+        LOG.debug("Call query to find Goods(name = {})", name);
+        TypedQuery<GoodsDto> query = entityManager
+                .createQuery("SELECT new com.kpi.springlabs.backend.model.dto.GoodsDto(g.id, g.name) " +
+                        "FROM goods g WHERE UPPER(g.name) = UPPER(:name)", GoodsDto.class);
+        query.setParameter("name", name).setMaxResults(1);
+        GoodsDto foundGoods = query.getSingleResult();
+        LOG.debug("Found Goods: {}", foundGoods);
+        return foundGoods != null ? Optional.of(foundGoods) : Optional.empty();
     }
 }

@@ -17,11 +17,11 @@ import javax.persistence.*;
 public class GoodsInStock extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "goods_id", nullable = false)
+    @JoinColumn(name = "goods_id", nullable = false, foreignKey = @ForeignKey(name = "FK_gist_goods"))
     private Goods goods;
 
     @ManyToOne
-    @JoinColumn(name = "warehouse_id", nullable = false)
+    @JoinColumn(name = "warehouse_id", nullable = false, foreignKey = @ForeignKey(name = "FK_gist_warehouses"))
     private Warehouse warehouse;
 
     @Column(nullable = false, columnDefinition = "NUMBER(5)")
