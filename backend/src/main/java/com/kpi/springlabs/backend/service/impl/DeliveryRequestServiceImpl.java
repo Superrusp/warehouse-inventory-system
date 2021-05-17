@@ -3,22 +3,23 @@ package com.kpi.springlabs.backend.service.impl;
 import com.kpi.springlabs.backend.exception.ConflictException;
 import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
 import com.kpi.springlabs.backend.model.DeliveryRequest;
-import com.kpi.springlabs.backend.repository.jdbc.DeliveryRequestRepository;
+import com.kpi.springlabs.backend.repository.jpa.DeliveryRequestJpaRepository;
 import com.kpi.springlabs.backend.service.DeliveryRequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @Slf4j
 public class DeliveryRequestServiceImpl implements DeliveryRequestService {
 
-    private final DeliveryRequestRepository deliveryRequestRepository;
+    private final DeliveryRequestJpaRepository deliveryRequestRepository;
 
     @Autowired
-    public DeliveryRequestServiceImpl(DeliveryRequestRepository deliveryRequestRepository) {
+    public DeliveryRequestServiceImpl(DeliveryRequestJpaRepository deliveryRequestRepository) {
         this.deliveryRequestRepository = deliveryRequestRepository;
     }
 
@@ -45,6 +46,7 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     }
 
     @Override
+    @Transactional
     public DeliveryRequest createDeliveryRequest(DeliveryRequest deliveryRequest) {
         LOG.debug("Creating DeliveryRequest {}", deliveryRequest);
         return deliveryRequestRepository.save(deliveryRequest)
@@ -55,12 +57,14 @@ public class DeliveryRequestServiceImpl implements DeliveryRequestService {
     }
 
     @Override
+    @Transactional
     public void updateDeliveryRequest(DeliveryRequest deliveryRequest) {
         LOG.debug("Updating DeliveryRequest {}", deliveryRequest);
         deliveryRequestRepository.update(deliveryRequest);
     }
 
     @Override
+    @Transactional
     public void deleteDeliveryRequest(long id) {
         LOG.debug("Deleting DeliveryRequest(id = {})", id);
         deliveryRequestRepository.delete(id);
