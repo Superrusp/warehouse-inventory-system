@@ -7,6 +7,9 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    schema: classpath:db/scripts/jpa/create_tables.sql
+    data: classpath:db/scripts/jpa/fill_tables.sql
+    initialization-mode: never
   jpa:
     show-sql: true
     hibernate:
@@ -14,6 +17,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.Oracle12cDialect
+    generate-ddl: false
 logging:
   level:
     org.springframework: ERROR
