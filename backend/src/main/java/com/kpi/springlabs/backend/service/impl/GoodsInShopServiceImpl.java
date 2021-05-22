@@ -3,22 +3,23 @@ package com.kpi.springlabs.backend.service.impl;
 import com.kpi.springlabs.backend.exception.ConflictException;
 import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
 import com.kpi.springlabs.backend.model.GoodsInShop;
-import com.kpi.springlabs.backend.repository.jdbc.GoodsInShopRepository;
+import com.kpi.springlabs.backend.repository.jpa.GoodsInShopJpaRepository;
 import com.kpi.springlabs.backend.service.GoodsInShopService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @Slf4j
 public class GoodsInShopServiceImpl implements GoodsInShopService {
 
-    private final GoodsInShopRepository goodsInShopRepository;
+    private final GoodsInShopJpaRepository goodsInShopRepository;
 
     @Autowired
-    public GoodsInShopServiceImpl(GoodsInShopRepository goodsInShopRepository) {
+    public GoodsInShopServiceImpl(GoodsInShopJpaRepository goodsInShopRepository) {
         this.goodsInShopRepository = goodsInShopRepository;
     }
 
@@ -45,6 +46,7 @@ public class GoodsInShopServiceImpl implements GoodsInShopService {
     }
 
     @Override
+    @Transactional
     public GoodsInShop createGoodsInShop(GoodsInShop goodsInStock) {
         LOG.debug("Creating GoodsInShop {}", goodsInStock);
         return goodsInShopRepository.save(goodsInStock)
@@ -55,12 +57,14 @@ public class GoodsInShopServiceImpl implements GoodsInShopService {
     }
 
     @Override
+    @Transactional
     public void updateGoodsInShop(GoodsInShop goodsInStock) {
         LOG.debug("Updating GoodsInShop {}", goodsInStock);
         goodsInShopRepository.update(goodsInStock);
     }
 
     @Override
+    @Transactional
     public void deleteGoodsInShop(long id) {
         LOG.debug("Deleting GoodsInShop(id = {})", id);
         goodsInShopRepository.delete(id);

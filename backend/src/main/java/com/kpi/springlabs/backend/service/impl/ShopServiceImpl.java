@@ -3,22 +3,23 @@ package com.kpi.springlabs.backend.service.impl;
 import com.kpi.springlabs.backend.exception.ConflictException;
 import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
 import com.kpi.springlabs.backend.model.Shop;
-import com.kpi.springlabs.backend.repository.jdbc.impl.ShopRepository;
+import com.kpi.springlabs.backend.repository.jpa.impl.ShopJpaRepositoryImpl;
 import com.kpi.springlabs.backend.service.ShopService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @Slf4j
 public class ShopServiceImpl implements ShopService {
 
-    private final ShopRepository shopRepository;
+    private final ShopJpaRepositoryImpl shopRepository;
 
     @Autowired
-    public ShopServiceImpl(ShopRepository shopRepository) {
+    public ShopServiceImpl(ShopJpaRepositoryImpl shopRepository) {
         this.shopRepository = shopRepository;
     }
 
@@ -39,6 +40,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
+    @Transactional
     public Shop createShop(Shop shop) {
         LOG.debug("Creating Shop {}", shop);
         return shopRepository.save(shop)
@@ -49,12 +51,14 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
+    @Transactional
     public void updateShop(Shop shop) {
         LOG.debug("Updating Shop {}", shop);
         shopRepository.update(shop);
     }
 
     @Override
+    @Transactional
     public void deleteShop(long id) {
         LOG.debug("Deleting Shop(id = {})", id);
         shopRepository.delete(id);

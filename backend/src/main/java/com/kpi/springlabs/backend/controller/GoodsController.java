@@ -1,5 +1,6 @@
 package com.kpi.springlabs.backend.controller;
 
+import com.kpi.springlabs.backend.aop.TrackExecutionTime;
 import com.kpi.springlabs.backend.model.Goods;
 import com.kpi.springlabs.backend.service.GoodsService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,13 @@ public class GoodsController {
     public ResponseEntity<?> getGoods(@PathVariable long id) {
         LOG.debug("Request special goods");
         return ResponseEntity.ok(goodsService.getGoodsById(id));
+    }
+
+    @GetMapping("/search")
+    @TrackExecutionTime
+    public ResponseEntity<?> getGoodsByName(@RequestParam String name) {
+        LOG.debug("Request special goods by its name");
+        return ResponseEntity.ok(goodsService.getGoodsByName(name));
     }
 
     @PostMapping

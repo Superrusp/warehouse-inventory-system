@@ -9,5 +9,6 @@ public interface Constants {
         String GOODS_IN_STOCKS = "goods_in_stocks";
         String GOODS_IN_SHOPS = "goods_in_shops";
         String DELIVERY_ITEMS = "delivery_items";
+        String DELIVERY_REQUESTS = "delivery_requests";
     }
 }
