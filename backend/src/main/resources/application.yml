@@ -1,6 +1,8 @@
 server:
   port: 8085
 spring:
+
+  # Oracle Configuration
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -16,6 +18,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.Oracle12cDialect
     generate-ddl: false
+    database: default
+
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URL}
+
+  # Logging Configuration
 logging:
   level:
     org.springframework: ERROR
