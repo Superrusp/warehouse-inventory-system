@@ -1,0 +1,5 @@
+use user_db;
+
+db.createCollection("users");
+
+db.createCollection("roles");
