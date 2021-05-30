@@ -11,4 +11,13 @@ public interface Constants {
         String DELIVERY_ITEMS = "delivery_items";
         String DELIVERY_REQUESTS = "delivery_requests";
     }
+
+    interface User {
+        String USERNAME = "username";
+        String EMAIL = "email";
+    }
+
+    interface AccessTokenType {
+        String BEARER = "Bearer";
+    }
 }
