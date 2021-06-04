@@ -34,7 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByUsername(String username) {
         LOG.debug("Call query to find User(username = {})", username);
         Query query = new Query();
-        query.addCriteria(Criteria.where(Constants.User.USERNAME).is(username));
+        query.addCriteria(Criteria.where(Constants.UserFields.USERNAME).is(username));
         User user = mongoTemplate.findOne(query, User.class);
         return user != null ? Optional.of(user) : Optional.empty();
     }
@@ -43,7 +43,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByEmail(String email) {
         LOG.debug("Call query to find User(email = {})", email);
         Query query = new Query();
-        query.addCriteria(Criteria.where(Constants.User.EMAIL).is(email));
+        query.addCriteria(Criteria.where(Constants.UserFields.EMAIL).is(email));
         User user = mongoTemplate.findOne(query, User.class);
         return user != null ? Optional.of(user) : Optional.empty();
     }

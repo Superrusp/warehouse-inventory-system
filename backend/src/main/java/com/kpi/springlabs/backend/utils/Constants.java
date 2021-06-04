@@ -12,9 +12,20 @@ public interface Constants {
         String DELIVERY_REQUESTS = "delivery_requests";
     }
 
-    interface User {
+    interface DocumentNames {
+        String USERS = "users";
+        String ROLES = "roles";
+        String CONFIRMATION_TOKENS = "confirmation_tokens";
+    }
+
+    interface UserFields {
         String USERNAME = "username";
         String EMAIL = "email";
+    }
+
+    interface ConfirmationTokenFields {
+        String ID = "id";
+        String TOKEN = "token";
     }
 
     interface AccessTokenType {

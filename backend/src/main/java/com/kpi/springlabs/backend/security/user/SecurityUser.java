@@ -18,6 +18,7 @@ public class SecurityUser implements UserDetails {
     private final String username;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
+    private final boolean enabled;
 
     public static SecurityUser create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
@@ -27,7 +28,8 @@ public class SecurityUser implements UserDetails {
         return new SecurityUser(
                 user.getUsername(),
                 user.getPassword(),
-                authorities
+                authorities,
+                user.isEnabled()
         );
     }
 
@@ -63,6 +65,6 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

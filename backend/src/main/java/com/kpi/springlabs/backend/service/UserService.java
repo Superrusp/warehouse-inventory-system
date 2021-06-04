@@ -6,4 +6,6 @@ import com.kpi.springlabs.backend.model.dto.request.RegistrationRequest;
 public interface UserService {
 
     User createUser(RegistrationRequest registrationRequest);
+
+    void updateUser(User user);
 }

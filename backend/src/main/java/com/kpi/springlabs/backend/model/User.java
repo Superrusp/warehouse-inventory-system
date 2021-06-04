@@ -1,5 +1,6 @@
 package com.kpi.springlabs.backend.model;
 
+import com.kpi.springlabs.backend.utils.Constants;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Set;
 
-@Document(collection = "users")
+@Document(collection = Constants.DocumentNames.USERS)
 @Builder
 @Setter
 @Getter
@@ -29,4 +30,6 @@ public class User {
 
     @DBRef
     private Set<Role> roles;
+
+    private boolean enabled;
 }
