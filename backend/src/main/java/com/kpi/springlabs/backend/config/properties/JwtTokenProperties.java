@@ -13,4 +13,5 @@ public class JwtTokenProperties {
 
     private String secretKey;
     private long expiredTimeSecAuthToken;
+    private long expiredTimeSecConfirmationToken;
 }

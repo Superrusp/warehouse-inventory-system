@@ -6,7 +6,9 @@ import com.kpi.springlabs.backend.model.dto.response.AuthenticationResponse;
 
 public interface AuthenticationService {
 
-    AuthenticationResponse register(RegistrationRequest registrationRequest);
+    void register(RegistrationRequest registrationRequest);
 
     AuthenticationResponse login(AuthenticationRequest authenticationRequest);
+
+    void confirmEmail(String token);
 }

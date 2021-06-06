@@ -1,5 +1,6 @@
 package com.kpi.springlabs.backend.security.token;
 
+import com.kpi.springlabs.backend.enums.TokenType;
 import com.kpi.springlabs.backend.security.user.CustomUserDetailsService;
 import com.kpi.springlabs.backend.security.user.SecurityUser;
 import com.kpi.springlabs.backend.utils.Constants;
@@ -38,7 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             LOG.debug("Execute token filter");
             String token = getTokenFromRequest(httpServletRequest);
-            if (token != null && jwtTokenProvider.validateToken(token)) {
+            if (token != null && jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN.name(), token)) {
                 String username = jwtTokenProvider.getUsername(token);
                 LOG.debug("The token contains username '{}'", username);
                 SecurityUser securityUser = userDetailsService.loadUserByUsername(username);
