@@ -1,9 +1,12 @@
 package com.kpi.springlabs.backend.service.impl;
 
 import com.kpi.springlabs.backend.enums.RoleEnum;
+import com.kpi.springlabs.backend.exception.BadRequestException;
 import com.kpi.springlabs.backend.exception.ConflictException;
+import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
 import com.kpi.springlabs.backend.model.Role;
 import com.kpi.springlabs.backend.model.User;
+import com.kpi.springlabs.backend.model.dto.request.ChangePasswordRequest;
 import com.kpi.springlabs.backend.model.dto.request.RegistrationRequest;
 import com.kpi.springlabs.backend.repository.mongo.UserRepository;
 import com.kpi.springlabs.backend.service.RoleService;
@@ -64,5 +67,28 @@ public class UserServiceImpl implements UserService {
     public void updateUser(User user) {
         LOG.debug("Updating user {}", user);
         userRepository.save(user);
+    }
+
+    @Override
+    public void changePassword(String username, ChangePasswordRequest changePasswordRequest) {
+        LOG.debug("Change password of User(username = {})", username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    LOG.error("User(username = {}) not found", username);
+                    throw new ObjectNotFoundException(String.format("User with username '%s' not found", username));
+                });
+
+        String oldPassword = changePasswordRequest.getOldPassword();
+        if (oldPasswordNotMatched(oldPassword, user.getPassword())) {
+            LOG.error("Invalid password: {}", oldPassword);
+            throw new BadRequestException("Invalid password");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    private boolean oldPasswordNotMatched(String oldPassword, String userEncodedPassword) {
+        return !passwordEncoder.matches(oldPassword, userEncodedPassword);
     }
 }
