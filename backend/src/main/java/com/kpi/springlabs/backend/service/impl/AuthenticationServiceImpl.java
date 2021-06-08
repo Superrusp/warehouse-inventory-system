@@ -5,6 +5,7 @@ import com.kpi.springlabs.backend.exception.BadRequestException;
 import com.kpi.springlabs.backend.model.ConfirmationToken;
 import com.kpi.springlabs.backend.model.User;
 import com.kpi.springlabs.backend.model.dto.request.AuthenticationRequest;
+import com.kpi.springlabs.backend.model.dto.request.PasswordResetRequest;
 import com.kpi.springlabs.backend.model.dto.request.RegistrationRequest;
 import com.kpi.springlabs.backend.model.dto.response.AuthenticationResponse;
 import com.kpi.springlabs.backend.security.token.JwtTokenProvider;
@@ -51,7 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String emailToken = jwtTokenProvider.generateMailConfirmationToken(username);
         ConfirmationToken confirmationToken = new ConfirmationToken(emailToken, user);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-        emailService.sendEmailWithConfirmationLink(user, emailToken);
+        emailService.sendEmailToConfirmRegistration(user, emailToken);
     }
 
     @Override
@@ -81,6 +82,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEnabled(true);
         userService.updateUser(user);
         LOG.debug("User was activated");
+        confirmationTokenService.deleteConfirmationToken(confirmationToken.getId());
+        LOG.debug("Confirmation token was deleted");
+    }
+
+    @Override
+    public void recoverPassword(String email) {
+        User user = userService.getByEmail(email);
+        LOG.debug("User: {}", user);
+        String resetPasswordToken = jwtTokenProvider.generateMailConfirmationToken(user.getUsername());
+        ConfirmationToken confirmationToken = new ConfirmationToken(resetPasswordToken, user);
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        emailService.sendEmailToConfirmPasswordReset(user, resetPasswordToken);
+    }
+
+    @Override
+    public void resetPassword(PasswordResetRequest passwordResetRequest) {
+        LOG.debug("Reset password");
+        ConfirmationToken confirmationToken = confirmationTokenService.getConfirmationToken(passwordResetRequest.getToken());
+        boolean isTokenValid = jwtTokenProvider.validateToken(TokenType.MAIL_CONFIRMATION_TOKEN.name(), confirmationToken.getToken());
+        if (!isTokenValid) {
+            throw new BadRequestException("JWT token is invalid");
+        }
+        final User user = confirmationToken.getUser();
+        userService.changePassword(user, passwordResetRequest.getPassword());
         confirmationTokenService.deleteConfirmationToken(confirmationToken.getId());
         LOG.debug("Confirmation token was deleted");
     }

@@ -7,7 +7,9 @@ public interface EmailService {
 
     void sendEmail(final SimpleMailMessage mailMessage);
 
-    void sendEmailWithConfirmationLink(User user, String token);
+    void sendEmailToConfirmRegistration(User user, String token);
+
+    void sendEmailToConfirmPasswordReset(User user, String token);
 
     SimpleMailMessage constructEmail(String recipient, String subject, String body);
 }

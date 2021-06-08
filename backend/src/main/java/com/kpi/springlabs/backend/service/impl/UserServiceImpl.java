@@ -88,6 +88,23 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public void changePassword(User user, String newPassword) {
+        LOG.debug("Change password for user: {}", user);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        LOG.debug("Get user by email");
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    LOG.error("User(email = {}) not found", email);
+                    throw new ObjectNotFoundException(String.format("User with email '%s' not found", email));
+                });
+    }
+
     private boolean oldPasswordNotMatched(String oldPassword, String userEncodedPassword) {
         return !passwordEncoder.matches(oldPassword, userEncodedPassword);
     }

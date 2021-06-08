@@ -15,5 +15,8 @@ public class MailProperties {
     private String registrationSubject;
     private String registrationText;
     private String registrationEndPointUri;
+    private String passwordResetSubject;
+    private String passwordResetText;
+    private String passwordResetEndPointUri;
     private String emailSender;
 }

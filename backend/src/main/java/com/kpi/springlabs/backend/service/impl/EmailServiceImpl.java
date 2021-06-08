@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendEmailWithConfirmationLink(User user, String token) {
+    public void sendEmailToConfirmRegistration(User user, String token) {
         LOG.debug("Sending email to confirm registration");
         final String recipientAddress = user.getEmail();
         final String subject = mailProperties.getRegistrationSubject();
@@ -37,6 +37,19 @@ public class EmailServiceImpl implements EmailService {
         final String confirmationUrl = String.format("%s%s?code=%s",
                 mailProperties.getSourceUrl(),
                 mailProperties.getRegistrationEndPointUri(),
+                token);
+        sendEmail(constructEmail(recipientAddress, subject, message + ": " + confirmationUrl));
+    }
+
+    @Override
+    public void sendEmailToConfirmPasswordReset(User user, String token) {
+        LOG.debug("Sending email to confirm password reset");
+        final String recipientAddress = user.getEmail();
+        final String subject = mailProperties.getPasswordResetSubject();
+        final String message = mailProperties.getPasswordResetText();
+        final String confirmationUrl = String.format("%s%s?code=%s",
+                mailProperties.getSourceUrl(),
+                mailProperties.getPasswordResetEndPointUri(),
                 token);
         sendEmail(constructEmail(recipientAddress, subject, message + ": " + confirmationUrl));
     }
