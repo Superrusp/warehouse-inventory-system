@@ -38,7 +38,7 @@ public class ShopController {
             @ApiResponse(code = 404, message = "Shop not found")
     })
     @GetMapping("/{id}")
-    public Shop getShop(@ApiParam(value = "Shop Id") @PathVariable long id) {
+    public Shop getShop(@ApiParam(value = "Shop Id", required = true) @PathVariable long id) {
         LOG.debug("Request special shop");
         return shopService.getShopById(id);
     }
@@ -47,7 +47,7 @@ public class ShopController {
     @ApiResponse(code = 201, message = "Shop created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public Shop createShop(@ApiParam(value = "Shop") @RequestBody Shop shop) {
+    public Shop createShop(@ApiParam(value = "Shop", required = true) @RequestBody Shop shop) {
         LOG.debug("Request shop creation");
         return shopService.createShop(shop);
     }
@@ -58,10 +58,10 @@ public class ShopController {
             @ApiResponse(code = 404, message = "Shop not found")
     })
     @PutMapping
-    public ResponseEntity<?> updateShop(@ApiParam(value = "Shop") @RequestBody Shop shop) {
+    public ResponseEntity<?> updateShop(@ApiParam(value = "Shop", required = true) @RequestBody Shop shop) {
         LOG.debug("Request shop update");
         shopService.updateShop(shop);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Shop was successfully updated.");
     }
 
     @ApiOperation(value = "Delete shop by id")
@@ -70,9 +70,9 @@ public class ShopController {
             @ApiResponse(code = 404, message = "Shop not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteShop(@ApiParam(value = "Shop Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteShop(@ApiParam(value = "Shop Id", required = true) @PathVariable long id) {
         LOG.debug("Request shop deletion");
         shopService.deleteShop(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Shop was successfully deleted.");
     }
 }

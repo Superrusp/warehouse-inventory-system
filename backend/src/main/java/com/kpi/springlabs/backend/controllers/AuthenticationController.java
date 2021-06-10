@@ -36,7 +36,7 @@ public class AuthenticationController {
             @ApiResponse(code = 409, message = "Username already taken or Email Address already in use")
     })
     @PostMapping("/registration")
-    public ResponseEntity<String> registration(@ApiParam(value = "Registration Request")
+    public ResponseEntity<String> registration(@ApiParam(value = "Registration Request", required = true)
                                                @Valid @RequestBody RegistrationRequest registrationRequest) {
         LOG.debug("Request for user registration");
         authenticationService.register(registrationRequest);
@@ -46,7 +46,7 @@ public class AuthenticationController {
     @ApiOperation(value = "User authentication", notes = "Performs login of the user", response = AuthenticationResponse.class)
     @ApiResponse(code = 200, message = "The token was generated successfully")
     @PostMapping("/login")
-    public AuthenticationResponse login(@ApiParam(value = "Authentication Request")
+    public AuthenticationResponse login(@ApiParam(value = "Authentication Request", required = true)
                                         @Valid @RequestBody AuthenticationRequest authenticationRequest) {
         LOG.debug("Request for user login");
         return authenticationService.login(authenticationRequest);
@@ -71,10 +71,11 @@ public class AuthenticationController {
             @ApiResponse(code = 404, message = "Email not found")
     })
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@ApiParam(value = "Email", required = true) @RequestParam @NotBlank @Email String email) {
+    public ResponseEntity<String> forgotPassword(@ApiParam(value = "Email", required = true)
+                                                 @RequestParam @NotBlank @Email String email) {
         LOG.debug("Request for password recovery");
         authenticationService.recoverPassword(email);
-        return ResponseEntity.ok("Password Recovery instructions was sent to email.");
+        return ResponseEntity.ok("Password Recovery instructions were sent to email.");
     }
 
     @ApiOperation(value = "Password Reset", notes = "Performs a password update, forcing the user to enter a new password")
@@ -83,7 +84,7 @@ public class AuthenticationController {
             @ApiResponse(code = 400, message = "Invalid password")
     })
     @PatchMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@ApiParam(value = "Password Reset Request")
+    public ResponseEntity<String> resetPassword(@ApiParam(value = "Password Reset Request", required = true)
                                                 @Valid @RequestBody PasswordResetRequest passwordResetRequest) {
         LOG.debug("Request to reset password");
         authenticationService.resetPassword(passwordResetRequest);

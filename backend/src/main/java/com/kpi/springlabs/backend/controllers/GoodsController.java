@@ -40,7 +40,7 @@ public class GoodsController {
             @ApiResponse(code = 404, message = "Goods not found")
     })
     @GetMapping("/{id}")
-    public Goods getGoods(@ApiParam(value = "Goods Id") @PathVariable long id) {
+    public Goods getGoods(@ApiParam(value = "Goods Id", required = true) @PathVariable long id) {
         LOG.debug("Request special goods");
         return goodsService.getGoodsById(id);
     }
@@ -52,7 +52,7 @@ public class GoodsController {
     })
     @GetMapping("/search")
     @TrackExecutionTime
-    public GoodsDto getGoodsByName(@ApiParam(value = "Goods Name") @RequestParam String name) {
+    public GoodsDto getGoodsByName(@ApiParam(value = "Goods Name", required = true) @RequestParam String name) {
         LOG.debug("Request special goods by its name");
         return goodsService.getGoodsByName(name);
     }
@@ -61,7 +61,7 @@ public class GoodsController {
     @ApiResponse(code = 201, message = "Goods created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public Goods createGoods(@ApiParam(value = "Goods") @RequestBody Goods goods) {
+    public Goods createGoods(@ApiParam(value = "Goods", required = true) @RequestBody Goods goods) {
         LOG.debug("Request goods creation");
         return goodsService.createGoods(goods);
     }
@@ -72,10 +72,10 @@ public class GoodsController {
             @ApiResponse(code = 404, message = "Goods not found")
     })
     @PutMapping
-    public ResponseEntity<?> updateGoods(@ApiParam(value = "Goods") @RequestBody Goods goods) {
+    public ResponseEntity<?> updateGoods(@ApiParam(value = "Goods", required = true) @RequestBody Goods goods) {
         LOG.debug("Request goods update");
         goodsService.updateGoods(goods);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods was successfully updated.");
     }
 
     @ApiOperation(value = "Delete goods by id")
@@ -84,9 +84,9 @@ public class GoodsController {
             @ApiResponse(code = 404, message = "Goods not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteGoods(@ApiParam(value = "Goods Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteGoods(@ApiParam(value = "Goods Id", required = true) @PathVariable long id) {
         LOG.debug("Request goods deletion");
         goodsService.deleteGoods(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods was successfully deleted.");
     }
 }

@@ -38,7 +38,8 @@ public class DeliveryRequestController {
             @ApiResponse(code = 404, message = "Delivery request not found")
     })
     @GetMapping("/{id}")
-    public DeliveryRequest getDeliveryRequest(@ApiParam(value = "Delivery Request Id") @PathVariable long id) {
+    public DeliveryRequest getDeliveryRequest(@ApiParam(value = "Delivery Request Id", required = true)
+                                              @PathVariable long id) {
         LOG.debug("Request special delivery request");
         return deliveryRequestService.getDeliveryRequestById(id);
     }
@@ -46,7 +47,8 @@ public class DeliveryRequestController {
     @ApiOperation(value = "Get delivery requests by goods id", response = DeliveryRequest.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Return delivery requests")
     @GetMapping("/goods")
-    public List<DeliveryRequest> getDeliveryRequestsOfGoods(@ApiParam(value = "Goods Id") @RequestParam long goodsId) {
+    public List<DeliveryRequest> getDeliveryRequestsOfGoods(@ApiParam(value = "Goods Id", required = true)
+                                                            @RequestParam long goodsId) {
         LOG.debug("Request delivery requests of goods");
         return deliveryRequestService.getDeliveryRequestsByGoodsId(goodsId);
     }
@@ -55,7 +57,8 @@ public class DeliveryRequestController {
     @ApiResponse(code = 201, message = "Delivery request created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public DeliveryRequest createDeliveryRequest(@ApiParam(value = "Delivery Request") @RequestBody DeliveryRequest deliveryRequest) {
+    public DeliveryRequest createDeliveryRequest(@ApiParam(value = "Delivery Request", required = true)
+                                                 @RequestBody DeliveryRequest deliveryRequest) {
         LOG.debug("Request delivery request creation");
         return deliveryRequestService.createDeliveryRequest(deliveryRequest);
     }
@@ -66,10 +69,11 @@ public class DeliveryRequestController {
             @ApiResponse(code = 404, message = "Delivery request not found")
     })
     @PutMapping
-    public ResponseEntity<?> updateDeliveryRequest(@ApiParam(value = "Delivery Request") @RequestBody DeliveryRequest deliveryRequest) {
+    public ResponseEntity<?> updateDeliveryRequest(@ApiParam(value = "Delivery Request", required = true)
+                                                   @RequestBody DeliveryRequest deliveryRequest) {
         LOG.debug("Request delivery request update");
         deliveryRequestService.updateDeliveryRequest(deliveryRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Delivery request was successfully updated.");
     }
 
     @ApiOperation(value = "Delete delivery request by id")
@@ -78,9 +82,10 @@ public class DeliveryRequestController {
             @ApiResponse(code = 404, message = "Delivery request not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDeliveryRequest(@ApiParam(value = "Delivery Request Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteDeliveryRequest(@ApiParam(value = "Delivery Request Id", required = true)
+                                                   @PathVariable long id) {
         LOG.debug("Request delivery request deletion");
         deliveryRequestService.deleteDeliveryRequest(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Delivery request was successfully deleted.");
     }
 }

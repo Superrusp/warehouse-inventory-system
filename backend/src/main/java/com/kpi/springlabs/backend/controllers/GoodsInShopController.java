@@ -35,7 +35,7 @@ public class GoodsInShopController {
     @ApiOperation(value = "Get goods by shop id", response = GoodsInShop.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Return goods in shop")
     @GetMapping("/{shopId}")
-    public List<GoodsInShop> loadAllGoodsInShop(@ApiParam(value = "Shop Id") @PathVariable long shopId) {
+    public List<GoodsInShop> loadAllGoodsInShop(@ApiParam(value = "Shop Id", required = true) @PathVariable long shopId) {
         LOG.debug("Request all goods in shop");
         return goodsInShopService.getAllGoodsInShop(shopId);
     }
@@ -46,8 +46,8 @@ public class GoodsInShopController {
             @ApiResponse(code = 404, message = "Goods in shop not found")
     })
     @GetMapping("/{shopId}/{goodsId}")
-    public GoodsInShop getCertainGoodsInShop(@ApiParam(value = "Shop Id") @PathVariable long shopId,
-                                             @ApiParam(value = "Goods Id") @PathVariable long goodsId) {
+    public GoodsInShop getCertainGoodsInShop(@ApiParam(value = "Shop Id", required = true) @PathVariable long shopId,
+                                             @ApiParam(value = "Goods Id", required = true) @PathVariable long goodsId) {
         LOG.debug("Request special goods in shop");
         return goodsInShopService.getCertainGoodsInShop(shopId, goodsId);
     }
@@ -56,7 +56,8 @@ public class GoodsInShopController {
     @ApiResponse(code = 201, message = "Goods in shop created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public GoodsInShop createGoodsInShop(@ApiParam(value = "Goods In Shop") @RequestBody GoodsInShop goodsInShop) {
+    public GoodsInShop createGoodsInShop(@ApiParam(value = "Goods In Shop", required = true)
+                                         @RequestBody GoodsInShop goodsInShop) {
         LOG.debug("Request goods in shop creation");
         return goodsInShopService.createGoodsInShop(goodsInShop);
     }
@@ -67,10 +68,11 @@ public class GoodsInShopController {
             @ApiResponse(code = 404, message = "Goods in shop not found")
     })
     @PutMapping
-    public ResponseEntity<?> updateGoodsInShop(@ApiParam(value = "Goods In Shop") @RequestBody GoodsInShop goodsInShop) {
+    public ResponseEntity<?> updateGoodsInShop(@ApiParam(value = "Goods In Shop", required = true)
+                                               @RequestBody GoodsInShop goodsInShop) {
         LOG.debug("Request goods in shop update");
         goodsInShopService.updateGoodsInShop(goodsInShop);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods in shop was successfully updated.");
     }
 
     @ApiOperation(value = "Delete goods in shop by id")
@@ -79,9 +81,10 @@ public class GoodsInShopController {
             @ApiResponse(code = 404, message = "Goods in shop not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteGoodsInShop(@ApiParam(value = "Goods In Shop Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteGoodsInShop(@ApiParam(value = "Goods In Shop Id", required = true)
+                                               @PathVariable long id) {
         LOG.debug("Request goods in shop deletion");
         goodsInShopService.deleteGoodsInShop(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods in shop was successfully deleted.");
     }
 }

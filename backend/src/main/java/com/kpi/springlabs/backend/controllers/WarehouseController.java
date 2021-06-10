@@ -38,7 +38,7 @@ public class WarehouseController {
             @ApiResponse(code = 404, message = "Warehouse not found")
     })
     @GetMapping("/{id}")
-    public Warehouse getWarehouse(@ApiParam(value = "Warehouse Id") @PathVariable long id) {
+    public Warehouse getWarehouse(@ApiParam(value = "Warehouse Id", required = true) @PathVariable long id) {
         LOG.debug("Request special warehouse");
         return warehouseService.getWarehouseById(id);
     }
@@ -47,7 +47,7 @@ public class WarehouseController {
     @ApiResponse(code = 201, message = "Warehouse created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public Warehouse createWarehouse(@ApiParam(value = "Warehouse") @RequestBody Warehouse warehouse) {
+    public Warehouse createWarehouse(@ApiParam(value = "Warehouse", required = true) @RequestBody Warehouse warehouse) {
         LOG.debug("Request warehouse creation");
         return warehouseService.createWarehouse(warehouse);
     }
@@ -58,10 +58,10 @@ public class WarehouseController {
             @ApiResponse(code = 404, message = "Warehouse not found")
     })
     @PutMapping
-    public ResponseEntity<?> updateWarehouse(@ApiParam(value = "Warehouse") @RequestBody Warehouse warehouse) {
+    public ResponseEntity<?> updateWarehouse(@ApiParam(value = "Warehouse", required = true) @RequestBody Warehouse warehouse) {
         LOG.debug("Request warehouse update");
         warehouseService.updateWarehouse(warehouse);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Warehouse was successfully updated.");
     }
 
     @ApiOperation(value = "Delete warehouse by id")
@@ -70,9 +70,9 @@ public class WarehouseController {
             @ApiResponse(code = 404, message = "Warehouse not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteWarehouse(@ApiParam(value = "Warehouse Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteWarehouse(@ApiParam(value = "Warehouse Id", required = true) @PathVariable long id) {
         LOG.debug("Request warehouse deletion");
         warehouseService.deleteWarehouse(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Warehouse was successfully deleted.");
     }
 }

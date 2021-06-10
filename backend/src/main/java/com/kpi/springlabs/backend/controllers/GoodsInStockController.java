@@ -36,7 +36,8 @@ public class GoodsInStockController {
     @ApiOperation(value = "Get goods by stock id", response = GoodsInStock.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Return goods in stock")
     @GetMapping("/{stockId}")
-    public List<GoodsInStock> loadAllGoodsInStock(@ApiParam(value = "Stock Id") @PathVariable long stockId) {
+    public List<GoodsInStock> loadAllGoodsInStock(@ApiParam(value = "Stock Id", required = true)
+                                                  @PathVariable long stockId) {
         LOG.debug("Request all goods in stock");
         return goodsInStockService.getAllGoodsInStock(stockId);
     }
@@ -47,8 +48,8 @@ public class GoodsInStockController {
             @ApiResponse(code = 404, message = "Goods in stock not found")
     })
     @GetMapping("/{stockId}/{goodsId}")
-    public GoodsInStock getGoodsInStock(@ApiParam(value = "Stock Id") @PathVariable long stockId,
-                                        @ApiParam(value = "Goods Id") @PathVariable long goodsId) {
+    public GoodsInStock getGoodsInStock(@ApiParam(value = "Stock Id", required = true) @PathVariable long stockId,
+                                        @ApiParam(value = "Goods Id", required = true) @PathVariable long goodsId) {
         LOG.debug("Request special goods in stock");
         return goodsInStockService.getCertainGoodsInStock(stockId, goodsId);
     }
@@ -57,7 +58,8 @@ public class GoodsInStockController {
     @ApiResponse(code = 201, message = "Goods in stock created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public GoodsInStock createGoodsInStock(@ApiParam(value = "Goods In Stock") @RequestBody GoodsInStock goodsInStock) {
+    public GoodsInStock createGoodsInStock(@ApiParam(value = "Goods In Stock", required = true)
+                                           @RequestBody GoodsInStock goodsInStock) {
         LOG.debug("Request goods in stock creation");
         return goodsInStockService.createGoodsInStock(goodsInStock);
     }
@@ -68,10 +70,11 @@ public class GoodsInStockController {
             @ApiResponse(code = 404, message = "Goods in stock not found")
     })
     @PutMapping
-    public ResponseEntity<?> updateGoodsInStock(@ApiParam(value = "Goods In Stock") @RequestBody GoodsInStock goodsInStock) {
+    public ResponseEntity<?> updateGoodsInStock(@ApiParam(value = "Goods In Stock", required = true)
+                                                @RequestBody GoodsInStock goodsInStock) {
         LOG.debug("Request goods in stock update");
         goodsInStockService.updateGoodsInStock(goodsInStock);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods in shop was successfully updated.");
     }
 
     @ApiOperation(value = "Delete goods in stock by id")
@@ -80,9 +83,10 @@ public class GoodsInStockController {
             @ApiResponse(code = 404, message = "Goods in stock not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteGoodsInStock(@ApiParam(value = "Goods In Stock Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteGoodsInStock(@ApiParam(value = "Goods In Stock Id", required = true)
+                                                @PathVariable long id) {
         LOG.debug("Request goods in stock deletion");
         goodsInStockService.deleteGoodsInStock(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods in stock was successfully deleted.");
     }
 }

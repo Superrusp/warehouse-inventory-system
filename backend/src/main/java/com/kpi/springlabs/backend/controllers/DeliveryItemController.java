@@ -19,7 +19,6 @@ import java.util.List;
 @Slf4j
 public class DeliveryItemController {
 
-    @Autowired
     private final DeliveryItemService deliveryItemService;
 
     @Autowired
@@ -41,7 +40,7 @@ public class DeliveryItemController {
             @ApiResponse(code = 404, message = "Delivery item not found")
     })
     @GetMapping("/{id}")
-    public DeliveryItem getDeliveryItem(@ApiParam(value = "Delivery Item Id") @PathVariable long id) {
+    public DeliveryItem getDeliveryItem(@ApiParam(value = "Delivery Item Id", required = true) @PathVariable long id) {
         LOG.debug("Request special delivery item");
         return deliveryItemService.getDeliveryItemById(id);
     }
@@ -50,7 +49,8 @@ public class DeliveryItemController {
     @ApiResponse(code = 200, message = "Return delivery items")
     @GetMapping("/search")
     @TrackExecutionTime
-    public List<DeliveryItemDto> getDeliveryItemByDeliveryStatus(@ApiParam(value = "Delivery Status") @RequestParam String deliveryStatus) {
+    public List<DeliveryItemDto> getDeliveryItemByDeliveryStatus(@ApiParam(value = "Delivery Status", required = true)
+                                                                 @RequestParam String deliveryStatus) {
         LOG.debug("Request delivery items by delivery status");
         return deliveryItemService.getDeliveryItemByDeliveryStatus(deliveryStatus);
     }
@@ -59,7 +59,8 @@ public class DeliveryItemController {
     @ApiResponse(code = 201, message = "Delivery item created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public DeliveryItem createDeliveryItem(@ApiParam(value = "Delivery Item") @RequestBody DeliveryItem deliveryItem) {
+    public DeliveryItem createDeliveryItem(@ApiParam(value = "Delivery Item", required = true)
+                                           @RequestBody DeliveryItem deliveryItem) {
         LOG.debug("Request delivery item creation");
         return deliveryItemService.createDeliveryItem(deliveryItem);
     }
@@ -70,10 +71,11 @@ public class DeliveryItemController {
             @ApiResponse(code = 404, message = "Delivery item not found")
     })
     @PutMapping
-    public ResponseEntity<?> updateDeliveryItem(@ApiParam(value = "Delivery Item") @RequestBody DeliveryItem deliveryItem) {
+    public ResponseEntity<?> updateDeliveryItem(@ApiParam(value = "Delivery Item", required = true)
+                                                @RequestBody DeliveryItem deliveryItem) {
         LOG.debug("Request delivery item update");
         deliveryItemService.updateDeliveryItem(deliveryItem);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Delivery item was successfully updated.");
     }
 
     @ApiOperation(value = "Delete delivery item by id")
@@ -82,9 +84,10 @@ public class DeliveryItemController {
             @ApiResponse(code = 404, message = "Delivery item not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDeliveryItem(@ApiParam(value = "Delivery Item Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteDeliveryItem(@ApiParam(value = "Delivery Item Id", required = true)
+                                                @PathVariable long id) {
         LOG.debug("Request delivery item deletion");
         deliveryItemService.deleteDeliveryItem(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Delivery item was successfully deleted.");
     }
 }
