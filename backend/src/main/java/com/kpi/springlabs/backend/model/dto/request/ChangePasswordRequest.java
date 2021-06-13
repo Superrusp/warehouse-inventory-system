@@ -1,6 +1,7 @@
 package com.kpi.springlabs.backend.model.dto.request;
 
 import com.kpi.springlabs.backend.validation.constraints.FieldMatch;
+import com.kpi.springlabs.backend.validation.constraints.ValidPassword;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,17 +16,15 @@ import javax.validation.constraints.Size;
 public class ChangePasswordRequest {
 
     @NotBlank(message = "The password cannot be blank.")
-    @Size(min = 5, max = 50, message = "The password must be from 5 to 50 characters long.")
+    @Size(min = 8, max = 16, message = "The password must be from 8 to 16 characters long.")
     @ApiModelProperty(value = "Old Password", position = 1, required = true)
     private String oldPassword;
 
-    @NotBlank(message = "The password cannot be blank.")
-    @Size(min = 5, max = 50, message = "The password must be from 5 to 50 characters long.")
+    @ValidPassword
     @ApiModelProperty(value = "New Password", position = 2, required = true)
     private String newPassword;
 
-    @NotBlank(message = "The password cannot be blank.")
-    @Size(min = 5, max = 50, message = "The password must be from 5 to 50 characters long.")
+    @ValidPassword
     @ApiModelProperty(value = "Confirm New Password", position = 3, required = true)
     private String confirmNewPassword;
 }

@@ -1,11 +1,12 @@
 package com.kpi.springlabs.backend.model.dto.request;
 
+import com.kpi.springlabs.backend.validation.constraints.ValidPassword;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -13,9 +14,8 @@ import javax.validation.constraints.Size;
         description = "The request body in JSON format is used to register a new user.")
 public class RegistrationRequest {
 
-    @NotBlank(message = "Username cannot be blank.")
-    @Size(min = 2, max = 32, message = "The username must be from 2 to 32 characters long.")
-    @ApiModelProperty(value = "Username", position = 1, example = "tester1", required = true)
+    @Pattern(regexp = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{2,32}$", message = "Incorrect username format.")
+    @ApiModelProperty(value = "Username", position = 1, example = "tester12345", required = true)
     private String username;
 
     @Email(message = "Incorrect email format.")
@@ -23,8 +23,7 @@ public class RegistrationRequest {
     @ApiModelProperty(value = "Email for registration", position = 2, example = "name@test.com", required = true)
     private String email;
 
-    @NotBlank(message = "Password cannot be blank.")
-    @Size(min = 5, max = 50, message = "The password must be from 5 to 50 characters long.")
-    @ApiModelProperty(value = "Password", position = 3, example = "12345", required = true)
+    @ValidPassword
+    @ApiModelProperty(value = "Password", position = 3, example = "Pass123@", required = true)
     private String password;
 }

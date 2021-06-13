@@ -13,12 +13,12 @@ import javax.validation.constraints.Size;
 public class AuthenticationRequest {
 
     @NotBlank(message = "Username cannot be blank.")
-    @Size(min = 2, max = 32, message = "The username must be from 2 to 32 characters long.")
+    @Size(min = 3, max = 32, message = "The username must be from 3 to 32 characters long.")
     @ApiModelProperty(value = "Username", position = 1, required = true)
     private String username;
 
     @NotBlank(message = "Password cannot be blank.")
-    @Size(min = 5, max = 50, message = "The password must be from 5 to 50 characters long.")
-    @ApiModelProperty(value = "Password", position = 2, example = "12345", required = true)
+    @Size(min = 8, max = 16, message = "The password must be from 8 to 16 characters long.")
+    @ApiModelProperty(value = "Password", position = 2, example = "Pass123@", required = true)
     private String password;
 }
