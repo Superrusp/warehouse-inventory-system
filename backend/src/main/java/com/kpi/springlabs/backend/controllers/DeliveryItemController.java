@@ -3,6 +3,7 @@ package com.kpi.springlabs.backend.controllers;
 import com.kpi.springlabs.backend.aop.TrackExecutionTime;
 import com.kpi.springlabs.backend.model.DeliveryItem;
 import com.kpi.springlabs.backend.model.dto.DeliveryItemDto;
+import com.kpi.springlabs.backend.security.access.AdminPermission;
 import com.kpi.springlabs.backend.service.DeliveryItemService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/delivery-items")
 @Api(value = "Delivery Item Controller", tags = "delivery items")
+@AdminPermission
 @Slf4j
 public class DeliveryItemController {
 

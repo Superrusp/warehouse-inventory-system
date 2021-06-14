@@ -1,6 +1,7 @@
 package com.kpi.springlabs.backend.controllers;
 
 import com.kpi.springlabs.backend.model.GoodsInStock;
+import com.kpi.springlabs.backend.security.access.AdminPermission;
 import com.kpi.springlabs.backend.service.GoodsInStockService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/goods-in-stocks")
 @Api(value = "Goods In Stock Controller", tags = "goods in stocks")
+@AdminPermission
 @Slf4j
 public class GoodsInStockController {
 

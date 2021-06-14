@@ -1,6 +1,7 @@
 package com.kpi.springlabs.backend.controllers;
 
 import com.kpi.springlabs.backend.model.Shop;
+import com.kpi.springlabs.backend.security.access.AdminPermission;
 import com.kpi.springlabs.backend.service.ShopService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class ShopController {
     @ApiOperation(value = "Create shop")
     @ApiResponse(code = 201, message = "Shop created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
+    @AdminPermission
     @PostMapping
     public Shop createShop(@ApiParam(value = "Shop", required = true) @RequestBody Shop shop) {
         LOG.debug("Request shop creation");
@@ -57,6 +59,7 @@ public class ShopController {
             @ApiResponse(code = 200, message = "Shop updated successfully"),
             @ApiResponse(code = 404, message = "Shop not found")
     })
+    @AdminPermission
     @PutMapping
     public ResponseEntity<?> updateShop(@ApiParam(value = "Shop", required = true) @RequestBody Shop shop) {
         LOG.debug("Request shop update");
@@ -69,6 +72,7 @@ public class ShopController {
             @ApiResponse(code = 200, message = "Shop deleted successfully"),
             @ApiResponse(code = 404, message = "Shop not found")
     })
+    @AdminPermission
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteShop(@ApiParam(value = "Shop Id", required = true) @PathVariable long id) {
         LOG.debug("Request shop deletion");
