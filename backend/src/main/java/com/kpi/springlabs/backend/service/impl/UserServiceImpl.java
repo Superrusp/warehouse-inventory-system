@@ -105,6 +105,16 @@ public class UserServiceImpl implements UserService {
                 });
     }
 
+    @Override
+    public User getByUsername(String username) {
+        LOG.debug("Get user by username");
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    LOG.error("User(username = {}) not found", username);
+                    throw new ObjectNotFoundException(String.format("User with username '%s' not found", username));
+                });
+    }
+
     private boolean oldPasswordNotMatched(String oldPassword, String userEncodedPassword) {
         return !passwordEncoder.matches(oldPassword, userEncodedPassword);
     }

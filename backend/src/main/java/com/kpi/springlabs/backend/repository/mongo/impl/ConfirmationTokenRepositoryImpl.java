@@ -27,7 +27,7 @@ public class ConfirmationTokenRepositoryImpl implements ConfirmationTokenReposit
     public Optional<ConfirmationToken> findByToken(String token) {
         LOG.debug("Call query to find confirmation token");
         Query query = new Query();
-        query.addCriteria(Criteria.where(Constants.ConfirmationTokenFields.TOKEN).is(token));
+        query.addCriteria(Criteria.where(Constants.TokenFields.TOKEN_VALUE).is(token));
         ConfirmationToken confirmationToken = mongoTemplate.findOne(query, ConfirmationToken.class);
         return confirmationToken != null ? Optional.of(confirmationToken) : Optional.empty();
     }
@@ -42,7 +42,7 @@ public class ConfirmationTokenRepositoryImpl implements ConfirmationTokenReposit
     public void delete(String id) {
         LOG.debug("Call query to delete confirmation token");
         Query query = new Query();
-        query.addCriteria(Criteria.where(Constants.ConfirmationTokenFields.ID).is(id));
+        query.addCriteria(Criteria.where(Constants.BasicFields.ID).is(id));
         mongoTemplate.remove(query, ConfirmationToken.class);
     }
 }

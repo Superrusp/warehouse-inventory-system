@@ -8,9 +8,12 @@ import lombok.Getter;
 @Builder
 @Getter
 @ApiModel(value = "Authentication response",
-        description = "Response body in JSON format that contains token and user information.")
+        description = "Response body in JSON format that contains access, refresh tokens and user information.")
 public class AuthenticationResponse {
 
-    @ApiModelProperty(value = "Token", position = 1)
-    private final String token;
+    @ApiModelProperty(value = "Access Token", position = 1)
+    private final String accessToken;
+
+    @ApiModelProperty(value = "Refresh Token", position = 2)
+    private final String refreshToken;
 }

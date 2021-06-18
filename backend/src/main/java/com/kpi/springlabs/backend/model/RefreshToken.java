@@ -9,10 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
-@Document(collection = Constants.DocumentNames.CONFIRMATION_TOKENS)
+@Document(collection = Constants.DocumentNames.REFRESH_TOKENS)
 @Setter
 @Getter
-public class ConfirmationToken {
+public class RefreshToken {
 
     @Id
     private String id;
@@ -24,7 +24,7 @@ public class ConfirmationToken {
     @DBRef
     private User user;
 
-    public ConfirmationToken(String tokenValue, User user) {
+    public RefreshToken(String tokenValue, User user) {
         this.tokenValue = tokenValue;
         this.createdDate = Instant.now();
         this.user = user;

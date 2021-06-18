@@ -16,6 +16,11 @@ public interface Constants {
         String USERS = "users";
         String ROLES = "roles";
         String CONFIRMATION_TOKENS = "confirmation_tokens";
+        String REFRESH_TOKENS = "refresh_tokens";
+    }
+
+    interface BasicFields {
+        String ID = "id";
     }
 
     interface UserFields {
@@ -23,9 +28,9 @@ public interface Constants {
         String EMAIL = "email";
     }
 
-    interface ConfirmationTokenFields {
-        String ID = "id";
-        String TOKEN = "token";
+    interface TokenFields {
+        String TOKEN_VALUE = "tokenValue";
+        String USER = "user";
     }
 
     interface AccessTokenType {

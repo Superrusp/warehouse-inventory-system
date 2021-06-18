@@ -12,6 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 public class JwtTokenProperties {
 
     private String secretKey;
-    private long expiredTimeSecAuthToken;
+    private long expiredTimeSecAccessToken;
+    private long expiredTimeSecRefreshToken;
     private long expiredTimeSecConfirmationToken;
 }

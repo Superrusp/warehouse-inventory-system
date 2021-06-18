@@ -44,7 +44,10 @@ public class AuthenticationController {
     }
 
     @ApiOperation(value = "User authentication", notes = "Performs login of the user", response = AuthenticationResponse.class)
-    @ApiResponse(code = 200, message = "The token was generated successfully")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The token was generated successfully"),
+            @ApiResponse(code = 404, message = "User not found")
+    })
     @PostMapping("/login")
     public AuthenticationResponse login(@ApiParam(value = "Authentication Request", required = true)
                                         @Valid @RequestBody AuthenticationRequest authenticationRequest) {
@@ -89,5 +92,19 @@ public class AuthenticationController {
         LOG.debug("Request to reset password");
         authenticationService.resetPassword(passwordResetRequest);
         return ResponseEntity.ok("Password successfully updated.");
+    }
+
+    @ApiOperation(value = "Refresh Tokens", notes = "Refreshes the expired access token and creates a new refresh token",
+            response = AuthenticationResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Tokens refreshed successfully"),
+            @ApiResponse(code = 400, message = "Refresh token is invalid"),
+            @ApiResponse(code = 404, message = "Refresh Token not found")
+    })
+    @PostMapping("/refresh-tokens")
+    public AuthenticationResponse refreshTokens(@ApiParam(value = "Refresh Token", required = true)
+                                                @RequestParam @NotBlank String refreshToken) {
+        LOG.debug("Request to refresh tokens");
+        return authenticationService.refreshTokens(refreshToken);
     }
 }

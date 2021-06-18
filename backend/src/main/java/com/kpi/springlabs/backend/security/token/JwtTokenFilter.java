@@ -40,7 +40,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             LOG.debug("Execute token filter");
             String token = getTokenFromRequest(httpServletRequest);
             if (token != null && jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN.name(), token)) {
-                String username = jwtTokenProvider.getUsername(token);
+                String username = jwtTokenProvider.getUsernameFromToken(token);
                 LOG.debug("The token contains username '{}'", username);
                 SecurityUser securityUser = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
