@@ -2,14 +2,20 @@ package com.kpi.springlabs.backend.security.token;
 
 import com.kpi.springlabs.backend.config.properties.JwtTokenProperties;
 import com.kpi.springlabs.backend.enums.TokenType;
+import com.kpi.springlabs.backend.model.JwtBlackList;
 import com.kpi.springlabs.backend.model.User;
+import com.kpi.springlabs.backend.service.JwtBlackListService;
+import com.kpi.springlabs.backend.utils.Constants;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,10 +27,12 @@ public class JwtTokenProvider {
     private static Map<TokenType, Long> TOKEN_TYPE_TO_EXPIRED_TIME;
 
     private final JwtTokenProperties jwtTokenProperties;
+    private final JwtBlackListService jwtBlackListService;
 
     @Autowired
-    public JwtTokenProvider(JwtTokenProperties jwtTokenProperties) {
+    public JwtTokenProvider(JwtTokenProperties jwtTokenProperties, JwtBlackListService jwtBlackListService) {
         this.jwtTokenProperties = jwtTokenProperties;
+        this.jwtBlackListService = jwtBlackListService;
     }
 
     public String generateAccessToken(User user) {
@@ -58,7 +66,7 @@ public class JwtTokenProvider {
             Jwts.parser()
                     .setSigningKey(jwtTokenProperties.getSecretKey())
                     .parseClaimsJws(token);
-            return isSubjectTokenValid(subject, token) && isExpirationDateValid(token);
+            return isSubjectTokenValid(subject, token) && isExpirationDateValid(token) && isTokenInNotBlackList(token);
         } catch (SignatureException e) {
             LOG.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -71,6 +79,18 @@ public class JwtTokenProvider {
             LOG.error("JWT claims string is empty: {}", e.getMessage());
         }
         return false;
+    }
+
+    public String getTokenFromRequest(HttpServletRequest request) {
+        LOG.debug("Get token from request");
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (StringUtils.hasText(header) && header.startsWith(Constants.AccessTokenType.BEARER)) {
+            LOG.debug("The token is being retrieved");
+            return header.substring(Constants.AccessTokenType.BEARER.length() + 1);
+        }
+        LOG.debug("The token is not found");
+        return null;
     }
 
     private String generateToken(String username, Map<String, Object> claims, TokenType tokenType) {
@@ -90,6 +110,16 @@ public class JwtTokenProvider {
     public String getUsernameFromToken(String token) {
         LOG.debug("Get username from token");
         return getClaimsFromToken(token).getId();
+    }
+
+    public boolean isTokenInNotBlackList(String token) {
+        JwtBlackList jwtTokenInBlackList = jwtBlackListService.getJwtTokenFromBlackList(token);
+        if (jwtTokenInBlackList != null) {
+            LOG.debug("Jwt token is in black list");
+            return false;
+        }
+        LOG.debug("Jwt token is not in black list");
+        return true;
     }
 
     private Claims getClaimsFromToken(String token) {

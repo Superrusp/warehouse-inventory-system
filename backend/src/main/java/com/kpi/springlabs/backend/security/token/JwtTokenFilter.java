@@ -3,15 +3,12 @@ package com.kpi.springlabs.backend.security.token;
 import com.kpi.springlabs.backend.enums.TokenType;
 import com.kpi.springlabs.backend.security.user.CustomUserDetailsService;
 import com.kpi.springlabs.backend.security.user.SecurityUser;
-import com.kpi.springlabs.backend.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -38,7 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             LOG.debug("Execute token filter");
-            String token = getTokenFromRequest(httpServletRequest);
+            String token = jwtTokenProvider.getTokenFromRequest(httpServletRequest);
             if (token != null && jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN.name(), token)) {
                 String username = jwtTokenProvider.getUsernameFromToken(token);
                 LOG.debug("The token contains username '{}'", username);
@@ -55,17 +52,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
-    }
-
-    private String getTokenFromRequest(HttpServletRequest request) {
-        LOG.debug("Get token from request");
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (StringUtils.hasText(header) && header.startsWith(Constants.AccessTokenType.BEARER)) {
-            LOG.debug("The token is being retrieved");
-            return header.substring(Constants.AccessTokenType.BEARER.length() + 1);
-        }
-        LOG.debug("The token is not found");
-        return null;
     }
 }

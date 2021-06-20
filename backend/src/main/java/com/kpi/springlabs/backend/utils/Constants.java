@@ -17,6 +17,7 @@ public interface Constants {
         String ROLES = "roles";
         String CONFIRMATION_TOKENS = "confirmation_tokens";
         String REFRESH_TOKENS = "refresh_tokens";
+        String JWT_BLACK_LISTS = "jwt_black_list";
     }
 
     interface BasicFields {
@@ -29,6 +30,7 @@ public interface Constants {
     }
 
     interface TokenFields {
+        String TOKEN = "token";
         String TOKEN_VALUE = "tokenValue";
         String USER = "user";
     }
