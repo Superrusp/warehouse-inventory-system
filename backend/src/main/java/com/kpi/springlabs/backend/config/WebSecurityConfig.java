@@ -1,6 +1,6 @@
 package com.kpi.springlabs.backend.config;
 
-import com.kpi.springlabs.backend.security.CustomAccessDeniedHandler;
+import com.kpi.springlabs.backend.security.access.CustomAccessDeniedHandler;
 import com.kpi.springlabs.backend.security.token.JwtLogoutHandler;
 import com.kpi.springlabs.backend.security.token.JwtTokenFilter;
 import com.kpi.springlabs.backend.security.token.JwtTokenProvider;
