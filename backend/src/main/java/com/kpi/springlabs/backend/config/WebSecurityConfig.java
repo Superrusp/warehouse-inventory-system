@@ -1,5 +1,6 @@
 package com.kpi.springlabs.backend.config;
 
+import com.kpi.springlabs.backend.security.CustomAccessDeniedHandler;
 import com.kpi.springlabs.backend.security.token.JwtLogoutHandler;
 import com.kpi.springlabs.backend.security.token.JwtTokenFilter;
 import com.kpi.springlabs.backend.security.token.JwtTokenProvider;
@@ -31,14 +32,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService userDetailsService;
     private final JwtLogoutHandler jwtLogoutHandler;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     @Autowired
     public WebSecurityConfig(AuthenticationEntryPoint unauthorizedHandler, JwtTokenProvider jwtTokenProvider,
-                             CustomUserDetailsService userDetailsService, JwtLogoutHandler jwtLogoutHandler) {
+                             CustomUserDetailsService userDetailsService, JwtLogoutHandler jwtLogoutHandler,
+                             CustomAccessDeniedHandler accessDeniedHandler) {
         this.unauthorizedHandler = unauthorizedHandler;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
         this.jwtLogoutHandler = jwtLogoutHandler;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Override
@@ -52,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
+                .accessDeniedHandler(accessDeniedHandler)
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**")
