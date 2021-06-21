@@ -107,4 +107,14 @@ public class AuthenticationController {
         LOG.debug("Request to refresh tokens");
         return authenticationService.refreshTokens(refreshToken);
     }
+
+    @ApiOperation(value = "User logout status", notes = "Responds to the user's logout status")
+    @ApiResponse(code = 400, message = "User Logout is invalid")
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(@ApiParam(value = "Success Logout", required = true) @RequestParam boolean success) {
+        if (success) {
+            return ResponseEntity.ok().body("User logout successfully.");
+        }
+        return ResponseEntity.badRequest().body("Invalid request on user logout.");
+    }
 }

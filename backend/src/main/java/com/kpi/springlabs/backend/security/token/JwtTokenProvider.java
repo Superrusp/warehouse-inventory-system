@@ -66,7 +66,7 @@ public class JwtTokenProvider {
             Jwts.parser()
                     .setSigningKey(jwtTokenProperties.getSecretKey())
                     .parseClaimsJws(token);
-            return isSubjectTokenValid(subject, token) && isExpirationDateValid(token) && isTokenInNotBlackList(token);
+            return isSubjectTokenValid(subject, token) && isExpirationDateValid(token) && isTokenNotInBlackList(token);
         } catch (SignatureException e) {
             LOG.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -112,7 +112,7 @@ public class JwtTokenProvider {
         return getClaimsFromToken(token).getId();
     }
 
-    public boolean isTokenInNotBlackList(String token) {
+    public boolean isTokenNotInBlackList(String token) {
         JwtBlackList jwtTokenInBlackList = jwtBlackListService.getJwtTokenFromBlackList(token);
         if (jwtTokenInBlackList != null) {
             LOG.debug("Jwt token is in black list");
