@@ -7,8 +7,8 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    schema: classpath:db/scripts/jpa/create_tables.sql
-    data: classpath:db/scripts/jpa/fill_tables.sql
+    schema: classpath:db/scripts/oracleDB/jpa/create_tables.sql
+    data: classpath:db/scripts/oracleDB/jpa/fill_tables.sql
     initialization-mode: never
   jpa:
     show-sql: true

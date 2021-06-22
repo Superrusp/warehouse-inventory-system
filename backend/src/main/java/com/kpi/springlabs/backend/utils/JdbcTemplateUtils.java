@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 
 @Component
-@PropertySource("classpath:db/database.properties")
+@PropertySource("classpath:db/oracle_db.properties")
 @ConfigurationProperties(prefix = "db")
 @Slf4j
 @Setter
