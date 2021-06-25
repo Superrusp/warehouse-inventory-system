@@ -1,0 +1,11 @@
+use user_db;
+
+db.createCollection("users");
+
+db.createCollection("roles");
+
+db.createCollection("confirmation_tokens");
+
+db.createCollection("refresh_tokens");
+
+db.createCollection("jwt_black_list");

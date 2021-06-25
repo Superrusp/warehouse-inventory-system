@@ -1,14 +1,14 @@
 server:
   port: 8085
 spring:
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+  # Oracle Configuration
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    schema: classpath:db/scripts/jpa/create_tables.sql
-    data: classpath:db/scripts/jpa/fill_tables.sql
+    schema: classpath:db/scripts/oracleDB/jpa/create_tables.sql
+    data: classpath:db/scripts/oracleDB/jpa/fill_tables.sql
     initialization-mode: never
   jpa:
     show-sql: true
@@ -18,6 +18,31 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.Oracle12cDialect
     generate-ddl: false
+    database: default
+
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URL}
+
+  # Mail Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  # Logging Configuration
 logging:
   level:
     org.springframework: ERROR

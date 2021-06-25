@@ -3,6 +3,7 @@ package com.kpi.springlabs.backend.controllers;
 import com.kpi.springlabs.backend.aop.TrackExecutionTime;
 import com.kpi.springlabs.backend.model.Goods;
 import com.kpi.springlabs.backend.model.dto.GoodsDto;
+import com.kpi.springlabs.backend.security.access.AdminPermission;
 import com.kpi.springlabs.backend.service.GoodsService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class GoodsController {
             @ApiResponse(code = 404, message = "Goods not found")
     })
     @GetMapping("/{id}")
-    public Goods getGoods(@ApiParam(value = "Goods Id") @PathVariable long id) {
+    public Goods getGoods(@ApiParam(value = "Goods Id", required = true) @PathVariable long id) {
         LOG.debug("Request special goods");
         return goodsService.getGoodsById(id);
     }
@@ -52,7 +53,7 @@ public class GoodsController {
     })
     @GetMapping("/search")
     @TrackExecutionTime
-    public GoodsDto getGoodsByName(@ApiParam(value = "Goods Name") @RequestParam String name) {
+    public GoodsDto getGoodsByName(@ApiParam(value = "Goods Name", required = true) @RequestParam String name) {
         LOG.debug("Request special goods by its name");
         return goodsService.getGoodsByName(name);
     }
@@ -60,8 +61,9 @@ public class GoodsController {
     @ApiOperation(value = "Create goods")
     @ApiResponse(code = 201, message = "Goods created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
+    @AdminPermission
     @PostMapping
-    public Goods createGoods(@ApiParam(value = "Goods") @RequestBody Goods goods) {
+    public Goods createGoods(@ApiParam(value = "Goods", required = true) @RequestBody Goods goods) {
         LOG.debug("Request goods creation");
         return goodsService.createGoods(goods);
     }
@@ -71,11 +73,12 @@ public class GoodsController {
             @ApiResponse(code = 200, message = "Goods updated successfully"),
             @ApiResponse(code = 404, message = "Goods not found")
     })
+    @AdminPermission
     @PutMapping
-    public ResponseEntity<?> updateGoods(@ApiParam(value = "Goods") @RequestBody Goods goods) {
+    public ResponseEntity<?> updateGoods(@ApiParam(value = "Goods", required = true) @RequestBody Goods goods) {
         LOG.debug("Request goods update");
         goodsService.updateGoods(goods);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods was successfully updated.");
     }
 
     @ApiOperation(value = "Delete goods by id")
@@ -83,10 +86,11 @@ public class GoodsController {
             @ApiResponse(code = 200, message = "Goods deleted successfully"),
             @ApiResponse(code = 404, message = "Goods not found")
     })
+    @AdminPermission
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteGoods(@ApiParam(value = "Goods Id") @PathVariable long id) {
+    public ResponseEntity<?> deleteGoods(@ApiParam(value = "Goods Id", required = true) @PathVariable long id) {
         LOG.debug("Request goods deletion");
         goodsService.deleteGoods(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Goods was successfully deleted.");
     }
 }
