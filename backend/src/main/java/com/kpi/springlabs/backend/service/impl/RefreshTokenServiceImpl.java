@@ -2,12 +2,13 @@ package com.kpi.springlabs.backend.service.impl;
 
 import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
 import com.kpi.springlabs.backend.model.RefreshToken;
-import com.kpi.springlabs.backend.model.User;
 import com.kpi.springlabs.backend.repository.mongo.RefreshTokenRepository;
 import com.kpi.springlabs.backend.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -43,8 +44,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public void deleteByUserIfExists(User user) {
-        LOG.debug("Delete refresh token by user if it exists");
-        refreshTokenRepository.deleteByUser(user);
+    public void deleteByTokenValue(String tokenValue) {
+        LOG.debug("Delete refresh token by its value");
+        refreshTokenRepository.deleteByToken(tokenValue);
+    }
+
+    @Override
+    public Long deleteAllExpiredSince(Date date) {
+        LOG.debug("Delete expired refresh tokens");
+        return refreshTokenRepository.deleteByExpiryDateLessThan(date);
     }
 }

@@ -35,7 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             LOG.debug("Execute token filter");
-            String token = jwtTokenProvider.getTokenFromRequest(httpServletRequest);
+            String token = jwtTokenProvider.getAccessTokenFromRequest(httpServletRequest);
             if (token != null && jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN.name(), token)) {
                 String username = jwtTokenProvider.getUsernameFromToken(token);
                 LOG.debug("The token contains username '{}'", username);

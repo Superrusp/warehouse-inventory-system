@@ -49,12 +49,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void register(RegistrationRequest registrationRequest) {
         LOG.debug("Register user by request: {}", registrationRequest);
         User user = userService.createUser(registrationRequest);
-        String username = user.getUsername();
-        LOG.debug("User '{}' was created", username);
-        String emailToken = jwtTokenProvider.generateMailConfirmationToken(username);
-        ConfirmationToken confirmationToken = new ConfirmationToken(emailToken, user);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-        emailService.sendEmailToConfirmRegistration(user, emailToken);
+        LOG.debug("User '{}' was created", user.getUsername());
+        String mailConfirmationToken = jwtTokenProvider.generateMailConfirmationToken(user);
+        emailService.sendEmailToConfirmRegistration(user, mailConfirmationToken);
     }
 
     @Override
@@ -70,16 +67,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userService.getByUsername(securityUser.getUsername());
 
         String accessToken = jwtTokenProvider.generateAccessToken(user);
-        String refreshTokenValue = jwtTokenProvider.generateRefreshToken(user.getUsername());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
 
-        refreshTokenService.deleteByUserIfExists(user);
-
-        RefreshToken refreshToken = new RefreshToken(refreshTokenValue, user);
-        refreshTokenService.save(refreshToken);
         LOG.debug("User was authenticated");
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshTokenValue)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -103,9 +96,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void recoverPassword(String email) {
         User user = userService.getByEmail(email);
         LOG.debug("User: {}", user);
-        String resetPasswordToken = jwtTokenProvider.generateMailConfirmationToken(user.getUsername());
-        ConfirmationToken confirmationToken = new ConfirmationToken(resetPasswordToken, user);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        String resetPasswordToken = jwtTokenProvider.generateMailConfirmationToken(user);
         emailService.sendEmailToConfirmPasswordReset(user, resetPasswordToken);
     }
 
@@ -138,8 +129,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = refreshToken.getUser();
         String newAccessToken = jwtTokenProvider.generateAccessToken(user);
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(user.getUsername());
-        refreshTokenService.save(new RefreshToken(newRefreshToken, user));
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
 
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)

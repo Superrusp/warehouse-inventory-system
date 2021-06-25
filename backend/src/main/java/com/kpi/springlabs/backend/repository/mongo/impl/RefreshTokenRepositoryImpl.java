@@ -1,9 +1,9 @@
 package com.kpi.springlabs.backend.repository.mongo.impl;
 
 import com.kpi.springlabs.backend.model.RefreshToken;
-import com.kpi.springlabs.backend.model.User;
 import com.kpi.springlabs.backend.repository.mongo.RefreshTokenRepository;
 import com.kpi.springlabs.backend.utils.Constants;
+import com.mongodb.client.result.DeleteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Repository
@@ -48,10 +49,19 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     }
 
     @Override
-    public void deleteByUser(User user) {
-        LOG.debug("Call query to delete refresh token by user");
+    public void deleteByToken(String token) {
+        LOG.debug("Call query to delete refresh token by its value");
         Query query = new Query();
-        query.addCriteria(Criteria.where(Constants.TokenFields.USER).is(user));
+        query.addCriteria(Criteria.where(Constants.TokenFields.TOKEN_VALUE).is(token));
         mongoTemplate.remove(query, RefreshToken.class);
+    }
+
+    @Override
+    public Long deleteByExpiryDateLessThan(Date date) {
+        LOG.debug("Call query to delete expired tokens");
+        Query query = new Query();
+        query.addCriteria(Criteria.where(Constants.TokenFields.EXPIRATION_DATE).lt(date));
+        DeleteResult result = mongoTemplate.remove(query, RefreshToken.class);
+        return result.getDeletedCount();
     }
 }

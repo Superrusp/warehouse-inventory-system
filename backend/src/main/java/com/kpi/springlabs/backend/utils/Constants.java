@@ -32,7 +32,8 @@ public interface Constants {
     interface TokenFields {
         String TOKEN = "token";
         String TOKEN_VALUE = "tokenValue";
-        String USER = "user";
+        String EXPIRATION_DATE = "expirationDate";
+        String REFRESH_TOKEN = "refreshToken";
     }
 
     interface AccessTokenType {

@@ -2,13 +2,18 @@ package com.kpi.springlabs.backend.security.token;
 
 import com.kpi.springlabs.backend.config.properties.JwtTokenProperties;
 import com.kpi.springlabs.backend.enums.TokenType;
+import com.kpi.springlabs.backend.model.ConfirmationToken;
 import com.kpi.springlabs.backend.model.JwtBlackList;
+import com.kpi.springlabs.backend.model.RefreshToken;
 import com.kpi.springlabs.backend.model.User;
+import com.kpi.springlabs.backend.service.ConfirmationTokenService;
 import com.kpi.springlabs.backend.service.JwtBlackListService;
+import com.kpi.springlabs.backend.service.RefreshTokenService;
 import com.kpi.springlabs.backend.utils.Constants;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -16,7 +21,9 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,15 +31,22 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtTokenProvider {
 
-    private static Map<TokenType, Long> TOKEN_TYPE_TO_EXPIRED_TIME;
+    public static final SimpleDateFormat EXPIRATION_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+
+    private static Map<TokenType, Pair<Long, ChronoUnit>> TOKEN_TYPE_TO_EXPIRED_TIME;
 
     private final JwtTokenProperties jwtTokenProperties;
     private final JwtBlackListService jwtBlackListService;
+    private final RefreshTokenService refreshTokenService;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Autowired
-    public JwtTokenProvider(JwtTokenProperties jwtTokenProperties, JwtBlackListService jwtBlackListService) {
+    public JwtTokenProvider(JwtTokenProperties jwtTokenProperties, JwtBlackListService jwtBlackListService,
+                            RefreshTokenService refreshTokenService, ConfirmationTokenService confirmationTokenService) {
         this.jwtTokenProperties = jwtTokenProperties;
         this.jwtBlackListService = jwtBlackListService;
+        this.refreshTokenService = refreshTokenService;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
     public String generateAccessToken(User user) {
@@ -46,18 +60,28 @@ public class JwtTokenProvider {
         return token;
     }
 
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(User user) {
+        String username = user.getUsername();
         LOG.debug("Generate refresh token by username: {}", username);
-        String token = generateToken(username, null, TokenType.REFRESH_TOKEN);
+        String tokenValue = generateToken(username, null, TokenType.REFRESH_TOKEN);
+        Date expirationDate = getClaimsFromToken(tokenValue).getExpiration();
+        LOG.debug("Token's expiration date: {}", EXPIRATION_DATE_FORMAT.format(expirationDate));
+        RefreshToken refreshToken = new RefreshToken(tokenValue, user, expirationDate.toInstant());
+        refreshTokenService.save(refreshToken);
         LOG.debug("Refresh token was generated for user '{}'", username);
-        return token;
+        return tokenValue;
     }
 
-    public String generateMailConfirmationToken(String username) {
+    public String generateMailConfirmationToken(User user) {
+        String username = user.getUsername();
         LOG.debug("Generate mail token by username: {}", username);
-        String token = generateToken(username, null, TokenType.MAIL_CONFIRMATION_TOKEN);
+        String tokenValue = generateToken(username, null, TokenType.MAIL_CONFIRMATION_TOKEN);
+        Date expirationDate = getClaimsFromToken(tokenValue).getExpiration();
+        LOG.debug("Token's expiration date: {}", EXPIRATION_DATE_FORMAT.format(expirationDate));
+        ConfirmationToken confirmationToken = new ConfirmationToken(tokenValue, user, expirationDate.toInstant());
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
         LOG.debug("Confirmation token was generated");
-        return token;
+        return tokenValue;
     }
 
     public boolean validateToken(String subject, String token) {
@@ -81,7 +105,7 @@ public class JwtTokenProvider {
         return false;
     }
 
-    public String getTokenFromRequest(HttpServletRequest request) {
+    public String getAccessTokenFromRequest(HttpServletRequest request) {
         LOG.debug("Get token from request");
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -94,13 +118,15 @@ public class JwtTokenProvider {
     }
 
     private String generateToken(String username, Map<String, Object> claims, TokenType tokenType) {
-        long expirationTime = TOKEN_TYPE_TO_EXPIRED_TIME.get(tokenType);
+        Pair<Long, ChronoUnit> expiryDateAndTimeUnitPair = TOKEN_TYPE_TO_EXPIRED_TIME.get(tokenType);
+        long expirationTime = expiryDateAndTimeUnitPair.getFirst();
+        ChronoUnit timeUnit = expiryDateAndTimeUnitPair.getSecond();
         String token = Jwts.builder()
                 .setId(username)
                 .setSubject(tokenType.name())
                 .addClaims(claims)
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(expirationTime)))
+                .setExpiration(Date.from(Instant.now().plus(expirationTime, timeUnit)))
                 .signWith(SignatureAlgorithm.HS512, jwtTokenProperties.getSecretKey())
                 .compact();
         LOG.debug("Token was generated for user '{}'", username);
@@ -122,7 +148,7 @@ public class JwtTokenProvider {
         return true;
     }
 
-    private Claims getClaimsFromToken(String token) {
+    public Claims getClaimsFromToken(String token) {
         LOG.debug("Get claims from token");
         return Jwts.parser()
                 .setSigningKey(jwtTokenProperties.getSecretKey())
@@ -154,8 +180,8 @@ public class JwtTokenProvider {
     private void init() {
         LOG.debug("token_type_to_expired_time map initialization");
         TOKEN_TYPE_TO_EXPIRED_TIME = new EnumMap<>(TokenType.class);
-        TOKEN_TYPE_TO_EXPIRED_TIME.put(TokenType.ACCESS_TOKEN, jwtTokenProperties.getExpiredTimeSecAccessToken());
-        TOKEN_TYPE_TO_EXPIRED_TIME.put(TokenType.REFRESH_TOKEN, jwtTokenProperties.getExpiredTimeSecRefreshToken());
-        TOKEN_TYPE_TO_EXPIRED_TIME.put(TokenType.MAIL_CONFIRMATION_TOKEN, jwtTokenProperties.getExpiredTimeSecConfirmationToken());
+        TOKEN_TYPE_TO_EXPIRED_TIME.put(TokenType.ACCESS_TOKEN, Pair.of(jwtTokenProperties.getExpiredTimeSecAccessToken(), ChronoUnit.MINUTES));
+        TOKEN_TYPE_TO_EXPIRED_TIME.put(TokenType.REFRESH_TOKEN, Pair.of(jwtTokenProperties.getExpiredTimeSecRefreshToken(), ChronoUnit.DAYS));
+        TOKEN_TYPE_TO_EXPIRED_TIME.put(TokenType.MAIL_CONFIRMATION_TOKEN, Pair.of(jwtTokenProperties.getExpiredTimeSecConfirmationToken(), ChronoUnit.HOURS));
     }
 }

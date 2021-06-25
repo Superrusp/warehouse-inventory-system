@@ -1,7 +1,8 @@
 package com.kpi.springlabs.backend.service;
 
 import com.kpi.springlabs.backend.model.RefreshToken;
-import com.kpi.springlabs.backend.model.User;
+
+import java.util.Date;
 
 public interface RefreshTokenService {
 
@@ -11,5 +12,7 @@ public interface RefreshTokenService {
 
     void delete(String id);
 
-    void deleteByUserIfExists(User user);
+    void deleteByTokenValue(String tokenValue);
+
+    Long deleteAllExpiredSince(Date date);
 }

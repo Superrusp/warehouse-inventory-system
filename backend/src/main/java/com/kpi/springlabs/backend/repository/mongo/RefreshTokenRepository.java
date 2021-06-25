@@ -1,8 +1,8 @@
 package com.kpi.springlabs.backend.repository.mongo;
 
 import com.kpi.springlabs.backend.model.RefreshToken;
-import com.kpi.springlabs.backend.model.User;
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface RefreshTokenRepository {
@@ -13,5 +13,7 @@ public interface RefreshTokenRepository {
 
     void delete(String id);
 
-    void deleteByUser(User user);
+    void deleteByToken(String token);
+
+    Long deleteByExpiryDateLessThan(Date date);
 }
