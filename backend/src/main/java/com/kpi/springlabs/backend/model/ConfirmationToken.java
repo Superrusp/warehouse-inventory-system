@@ -19,14 +19,14 @@ public class ConfirmationToken {
 
     private String tokenValue;
 
-    private Instant createdDate;
+    private Instant expirationDate;
 
     @DBRef
     private User user;
 
-    public ConfirmationToken(String tokenValue, User user) {
+    public ConfirmationToken(String tokenValue, User user, Instant expirationDate) {
         this.tokenValue = tokenValue;
-        this.createdDate = Instant.now();
+        this.expirationDate = expirationDate;
         this.user = user;
     }
 }

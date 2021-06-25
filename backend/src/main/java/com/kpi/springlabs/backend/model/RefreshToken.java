@@ -19,14 +19,14 @@ public class RefreshToken {
 
     private String tokenValue;
 
-    private Instant createdDate;
+    private Instant expirationDate;
 
     @DBRef
     private User user;
 
-    public RefreshToken(String tokenValue, User user) {
+    public RefreshToken(String tokenValue, User user, Instant expirationDate) {
         this.tokenValue = tokenValue;
-        this.createdDate = Instant.now();
+        this.expirationDate = expirationDate;
         this.user = user;
     }
 }
