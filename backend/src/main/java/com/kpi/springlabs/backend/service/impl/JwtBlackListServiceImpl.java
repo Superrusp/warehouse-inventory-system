@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @Slf4j
 public class JwtBlackListServiceImpl implements JwtBlackListService {
@@ -34,5 +36,11 @@ public class JwtBlackListServiceImpl implements JwtBlackListService {
                     LOG.error("Jwt token cannot be added to the black list");
                     return new ConflictException("Jwt token cannot be added to the black list");
                 });
+    }
+
+    @Override
+    public Long deleteAllExpiredSince(Date date) {
+        LOG.debug("Delete expired blacklisted tokens");
+        return jwtBlackListRepository.deleteByExpiryDateLessThan(date);
     }
 }

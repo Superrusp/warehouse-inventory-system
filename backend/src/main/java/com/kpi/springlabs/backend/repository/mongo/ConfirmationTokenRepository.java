@@ -2,6 +2,7 @@ package com.kpi.springlabs.backend.repository.mongo;
 
 import com.kpi.springlabs.backend.model.ConfirmationToken;
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface ConfirmationTokenRepository {
@@ -11,4 +12,6 @@ public interface ConfirmationTokenRepository {
     void save(ConfirmationToken confirmationToken);
 
     void delete(String id);
+
+    Long deleteByExpiryDateLessThan(Date date);
 }

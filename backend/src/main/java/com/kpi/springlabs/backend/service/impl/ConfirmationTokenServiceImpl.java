@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @Slf4j
 public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
@@ -39,5 +41,11 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
     public void deleteConfirmationToken(String id) {
         LOG.debug("Delete ConfirmationToken(id = {})", id);
         confirmationTokenRepository.delete(id);
+    }
+
+    @Override
+    public Long deleteAllExpiredSince(Date date) {
+        LOG.debug("Delete expired confirmation tokens");
+        return confirmationTokenRepository.deleteByExpiryDateLessThan(date);
     }
 }

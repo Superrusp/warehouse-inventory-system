@@ -3,6 +3,7 @@ package com.kpi.springlabs.backend.repository.mongo.impl;
 import com.kpi.springlabs.backend.model.ConfirmationToken;
 import com.kpi.springlabs.backend.repository.mongo.ConfirmationTokenRepository;
 import com.kpi.springlabs.backend.utils.Constants;
+import com.mongodb.client.result.DeleteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Repository
@@ -44,5 +46,14 @@ public class ConfirmationTokenRepositoryImpl implements ConfirmationTokenReposit
         Query query = new Query();
         query.addCriteria(Criteria.where(Constants.BasicFields.ID).is(id));
         mongoTemplate.remove(query, ConfirmationToken.class);
+    }
+
+    @Override
+    public Long deleteByExpiryDateLessThan(Date date) {
+        LOG.debug("Call query to delete expired tokens");
+        Query query = new Query();
+        query.addCriteria(Criteria.where(Constants.TokenFields.EXPIRATION_DATE).lt(date));
+        DeleteResult result = mongoTemplate.remove(query, ConfirmationToken.class);
+        return result.getDeletedCount();
     }
 }
