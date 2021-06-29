@@ -42,6 +42,12 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
+  # Task Scheduling Configuration
+  task:
+    scheduling:
+      pool:
+        size: 3
+
   # Logging Configuration
 logging:
   level:
