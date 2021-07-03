@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @MappedSuperclass
+@Setter
 @Getter
 @ToString
 @NoArgsConstructor
