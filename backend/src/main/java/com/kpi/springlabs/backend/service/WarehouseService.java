@@ -1,18 +1,18 @@
 package com.kpi.springlabs.backend.service;
 
-import com.kpi.springlabs.backend.model.Warehouse;
+import com.kpi.springlabs.backend.model.dto.WarehouseDto;
 
 import java.util.List;
 
 public interface WarehouseService {
 
-    List<Warehouse> getWarehouses();
+    List<WarehouseDto> getWarehouses();
 
-    Warehouse getWarehouseById(long id);
+    WarehouseDto getWarehouseById(long id);
 
-    Warehouse createWarehouse(Warehouse warehouse);
+    WarehouseDto createWarehouse(WarehouseDto warehouseDto);
 
-    void updateWarehouse(Warehouse warehouse);
+    void updateWarehouse(WarehouseDto warehouseDto);
 
     void deleteWarehouse(long id);
 }

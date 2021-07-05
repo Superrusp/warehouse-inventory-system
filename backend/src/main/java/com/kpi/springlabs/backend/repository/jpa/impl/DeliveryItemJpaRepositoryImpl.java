@@ -2,7 +2,7 @@ package com.kpi.springlabs.backend.repository.jpa.impl;
 
 import com.kpi.springlabs.backend.aop.TrackExecutionTime;
 import com.kpi.springlabs.backend.model.DeliveryItem;
-import com.kpi.springlabs.backend.model.dto.DeliveryItemDto;
+import com.kpi.springlabs.backend.model.dto.response.DeliveryItemStatusResponse;
 import com.kpi.springlabs.backend.repository.jpa.DeliveryItemJpaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -63,11 +63,12 @@ public class DeliveryItemJpaRepositoryImpl implements DeliveryItemJpaRepository 
 
     @Override
     @TrackExecutionTime
-    public List<DeliveryItemDto> findDeliveryItemsByDeliveryStatus(String deliveryStatus) {
+    public List<DeliveryItemStatusResponse> findDeliveryItemsByDeliveryStatus(String deliveryStatus) {
         LOG.debug("Call query to find DeliveryItem(deliveryStatus = {})", deliveryStatus);
-        TypedQuery<DeliveryItemDto> query = entityManager
-                .createQuery("SELECT new com.kpi.springlabs.backend.model.dto.DeliveryItemDto(d.id, d.deliveryStatus)" +
-                        " FROM delivery_items d WHERE UPPER(d.deliveryStatus) = UPPER(:deliveryStatus)", DeliveryItemDto.class);
+        TypedQuery<DeliveryItemStatusResponse> query = entityManager
+                .createQuery("SELECT new com.kpi.springlabs.backend.model.dto.response.DeliveryItemStatusResponse(d.id, d.deliveryStatus)" +
+                                " FROM delivery_items d WHERE UPPER(d.deliveryStatus) = UPPER(:deliveryStatus)",
+                        DeliveryItemStatusResponse.class);
         query.setParameter("deliveryStatus", deliveryStatus);
         return query.getResultList();
     }

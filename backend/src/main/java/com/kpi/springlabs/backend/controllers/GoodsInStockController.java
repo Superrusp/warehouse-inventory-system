@@ -1,13 +1,16 @@
 package com.kpi.springlabs.backend.controllers;
 
-import com.kpi.springlabs.backend.model.GoodsInStock;
+import com.kpi.springlabs.backend.model.dto.GoodsInStockDto;
 import com.kpi.springlabs.backend.security.access.AdminPermission;
 import com.kpi.springlabs.backend.service.GoodsInStockService;
+import com.kpi.springlabs.backend.validation.constraints.groups.ExcludeIdValidation;
+import com.kpi.springlabs.backend.validation.constraints.groups.IncludeIdValidation;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,43 +30,44 @@ public class GoodsInStockController {
         this.goodsInStockService = goodsInStockService;
     }
 
-    @ApiOperation(value = "Get all goods in stocks", response = GoodsInStock.class, responseContainer = "List")
+    @ApiOperation(value = "Get all goods in stocks", response = GoodsInStockDto.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Return goods in stocks")
     @GetMapping
-    public List<GoodsInStock> loadAllGoodsInStocks() {
+    public List<GoodsInStockDto> loadAllGoodsInStocks() {
         LOG.debug("Request all goods in stocks");
         return goodsInStockService.getAllGoodsInStocks();
     }
 
-    @ApiOperation(value = "Get goods by stock id", response = GoodsInStock.class, responseContainer = "List")
+    @ApiOperation(value = "Get goods by stock id", response = GoodsInStockDto.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Return goods in stock")
     @GetMapping("/{stockId}")
-    public List<GoodsInStock> loadAllGoodsInStock(@ApiParam(value = "Stock Id", required = true)
-                                                  @PathVariable long stockId) {
+    public List<GoodsInStockDto> loadAllGoodsInStock(@ApiParam(value = "Stock Id", required = true)
+                                                     @PathVariable long stockId) {
         LOG.debug("Request all goods in stock");
         return goodsInStockService.getAllGoodsInStock(stockId);
     }
 
-    @ApiOperation(value = "Get special goods by stock id", response = GoodsInStock.class)
+    @ApiOperation(value = "Get special goods by stock id", response = GoodsInStockDto.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Return goods in stock"),
             @ApiResponse(code = 404, message = "Goods in stock not found")
     })
     @GetMapping("/{stockId}/{goodsId}")
-    public GoodsInStock getGoodsInStock(@ApiParam(value = "Stock Id", required = true) @PathVariable long stockId,
-                                        @ApiParam(value = "Goods Id", required = true) @PathVariable long goodsId) {
+    public GoodsInStockDto getGoodsInStock(@ApiParam(value = "Stock Id", required = true) @PathVariable long stockId,
+                                           @ApiParam(value = "Goods Id", required = true) @PathVariable long goodsId) {
         LOG.debug("Request special goods in stock");
         return goodsInStockService.getCertainGoodsInStock(stockId, goodsId);
     }
 
-    @ApiOperation(value = "Create goods in stock")
+    @ApiOperation(value = "Create goods in stock", response = GoodsInStockDto.class)
     @ApiResponse(code = 201, message = "Goods in stock created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping
-    public GoodsInStock createGoodsInStock(@ApiParam(value = "Goods In Stock", required = true)
-                                           @RequestBody GoodsInStock goodsInStock) {
+    public GoodsInStockDto createGoodsInStock(@ApiParam(value = "Goods In Stock", required = true)
+                                              @Validated(ExcludeIdValidation.class)
+                                              @RequestBody GoodsInStockDto goodsInStockDto) {
         LOG.debug("Request goods in stock creation");
-        return goodsInStockService.createGoodsInStock(goodsInStock);
+        return goodsInStockService.createGoodsInStock(goodsInStockDto);
     }
 
     @ApiOperation(value = "Update goods in stock")
@@ -73,9 +77,10 @@ public class GoodsInStockController {
     })
     @PutMapping
     public ResponseEntity<?> updateGoodsInStock(@ApiParam(value = "Goods In Stock", required = true)
-                                                @RequestBody GoodsInStock goodsInStock) {
+                                                @Validated(IncludeIdValidation.class)
+                                                @RequestBody GoodsInStockDto goodsInStockDto) {
         LOG.debug("Request goods in stock update");
-        goodsInStockService.updateGoodsInStock(goodsInStock);
+        goodsInStockService.updateGoodsInStock(goodsInStockDto);
         return ResponseEntity.ok("Goods in shop was successfully updated.");
     }
 

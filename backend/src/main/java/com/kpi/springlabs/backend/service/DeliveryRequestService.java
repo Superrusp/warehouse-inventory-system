@@ -1,20 +1,20 @@
 package com.kpi.springlabs.backend.service;
 
-import com.kpi.springlabs.backend.model.DeliveryRequest;
+import com.kpi.springlabs.backend.model.dto.DeliveryRequestDto;
 
 import java.util.List;
 
 public interface DeliveryRequestService {
 
-    List<DeliveryRequest> getDeliveryRequests();
+    List<DeliveryRequestDto> getDeliveryRequests();
 
-    DeliveryRequest getDeliveryRequestById(long id);
+    DeliveryRequestDto getDeliveryRequestById(long id);
 
-    List<DeliveryRequest> getDeliveryRequestsByGoodsId(long goodsId);
+    List<DeliveryRequestDto> getDeliveryRequestsByGoodsId(long goodsId);
 
-    DeliveryRequest createDeliveryRequest(DeliveryRequest deliveryRequest);
+    DeliveryRequestDto createDeliveryRequest(DeliveryRequestDto deliveryRequestDto);
 
-    void updateDeliveryRequest(DeliveryRequest deliveryRequest);
+    void updateDeliveryRequest(DeliveryRequestDto deliveryRequestDto);
 
     void deleteDeliveryRequest(long id);
 

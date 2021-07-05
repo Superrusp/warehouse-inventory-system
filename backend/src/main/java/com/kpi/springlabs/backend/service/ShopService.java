@@ -1,18 +1,18 @@
 package com.kpi.springlabs.backend.service;
 
-import com.kpi.springlabs.backend.model.Shop;
+import com.kpi.springlabs.backend.model.dto.ShopDto;
 
 import java.util.List;
 
 public interface ShopService {
 
-    List<Shop> getShops();
+    List<ShopDto> getShops();
 
-    Shop getShopById(long id);
+    ShopDto getShopById(long id);
 
-    Shop createShop(Shop shop);
+    ShopDto createShop(ShopDto shopDto);
 
-    void updateShop(Shop shop);
+    void updateShop(ShopDto shopDto);
 
     void deleteShop(long id);
 }

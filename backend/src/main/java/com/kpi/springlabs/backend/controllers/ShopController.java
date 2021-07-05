@@ -1,13 +1,16 @@
 package com.kpi.springlabs.backend.controllers;
 
-import com.kpi.springlabs.backend.model.Shop;
+import com.kpi.springlabs.backend.model.dto.ShopDto;
 import com.kpi.springlabs.backend.security.access.AdminPermission;
 import com.kpi.springlabs.backend.service.ShopService;
+import com.kpi.springlabs.backend.validation.constraints.groups.ExcludeIdValidation;
+import com.kpi.springlabs.backend.validation.constraints.groups.IncludeIdValidation;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,33 +28,34 @@ public class ShopController {
         this.shopService = shopService;
     }
 
-    @ApiOperation(value = "Get all shops", response = Shop.class, responseContainer = "List")
+    @ApiOperation(value = "Get all shops", response = ShopDto.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Return shops")
     @GetMapping
-    public List<Shop> loadAllShops() {
+    public List<ShopDto> loadAllShops() {
         LOG.debug("Request all shops");
         return shopService.getShops();
     }
 
-    @ApiOperation(value = "Get shop by id", response = Shop.class)
+    @ApiOperation(value = "Get shop by id", response = ShopDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Return shop"),
             @ApiResponse(code = 404, message = "Shop not found")
     })
     @GetMapping("/{id}")
-    public Shop getShop(@ApiParam(value = "Shop Id", required = true) @PathVariable long id) {
+    public ShopDto getShop(@ApiParam(value = "Shop Id", required = true) @PathVariable long id) {
         LOG.debug("Request special shop");
         return shopService.getShopById(id);
     }
 
-    @ApiOperation(value = "Create shop")
+    @ApiOperation(value = "Create shop", response = ShopDto.class)
     @ApiResponse(code = 201, message = "Shop created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @AdminPermission
     @PostMapping
-    public Shop createShop(@ApiParam(value = "Shop", required = true) @RequestBody Shop shop) {
+    public ShopDto createShop(@ApiParam(value = "Shop", required = true)
+                              @Validated(ExcludeIdValidation.class) @RequestBody ShopDto shopDto) {
         LOG.debug("Request shop creation");
-        return shopService.createShop(shop);
+        return shopService.createShop(shopDto);
     }
 
     @ApiOperation(value = "Update shop")
@@ -61,9 +65,10 @@ public class ShopController {
     })
     @AdminPermission
     @PutMapping
-    public ResponseEntity<?> updateShop(@ApiParam(value = "Shop", required = true) @RequestBody Shop shop) {
+    public ResponseEntity<?> updateShop(@ApiParam(value = "Shop", required = true)
+                                        @Validated(IncludeIdValidation.class) @RequestBody ShopDto shopDto) {
         LOG.debug("Request shop update");
-        shopService.updateShop(shop);
+        shopService.updateShop(shopDto);
         return ResponseEntity.ok("Shop was successfully updated.");
     }
 

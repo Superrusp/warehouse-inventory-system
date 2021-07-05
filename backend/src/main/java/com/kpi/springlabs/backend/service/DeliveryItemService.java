@@ -1,21 +1,21 @@
 package com.kpi.springlabs.backend.service;
 
-import com.kpi.springlabs.backend.model.DeliveryItem;
 import com.kpi.springlabs.backend.model.dto.DeliveryItemDto;
+import com.kpi.springlabs.backend.model.dto.response.DeliveryItemStatusResponse;
 
 import java.util.List;
 
 public interface DeliveryItemService {
 
-    List<DeliveryItem> getDeliveryItems();
+    List<DeliveryItemDto> getDeliveryItems();
 
-    DeliveryItem getDeliveryItemById(long id);
+    DeliveryItemDto getDeliveryItemById(long id);
 
-    List<DeliveryItemDto> getDeliveryItemByDeliveryStatus(String deliveryStatus);
+    List<DeliveryItemStatusResponse> getDeliveryItemByDeliveryStatus(String deliveryStatus);
 
-    DeliveryItem createDeliveryItem(DeliveryItem deliveryItem);
+    DeliveryItemDto createDeliveryItem(DeliveryItemDto deliveryItemDto);
 
-    void updateDeliveryItem(DeliveryItem deliveryItem);
+    void updateDeliveryItem(DeliveryItemDto deliveryItemDto);
 
     void deleteDeliveryItem(long id);
 }

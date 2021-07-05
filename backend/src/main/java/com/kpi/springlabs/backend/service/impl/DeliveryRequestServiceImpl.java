@@ -2,7 +2,9 @@ package com.kpi.springlabs.backend.service.impl;
 
 import com.kpi.springlabs.backend.exception.ConflictException;
 import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
+import com.kpi.springlabs.backend.mappers.DeliveryRequestMapper;
 import com.kpi.springlabs.backend.model.DeliveryRequest;
+import com.kpi.springlabs.backend.model.dto.DeliveryRequestDto;
 import com.kpi.springlabs.backend.repository.jpa.DeliveryRequestJpaRepository;
 import com.kpi.springlabs.backend.service.DeliveryRequestService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,48 +19,57 @@ import java.util.List;
 public class DeliveryRequestServiceImpl implements DeliveryRequestService {
 
     private final DeliveryRequestJpaRepository deliveryRequestRepository;
+    private final DeliveryRequestMapper deliveryRequestMapper;
 
     @Autowired
-    public DeliveryRequestServiceImpl(DeliveryRequestJpaRepository deliveryRequestRepository) {
+    public DeliveryRequestServiceImpl(DeliveryRequestJpaRepository deliveryRequestRepository,
+                                      DeliveryRequestMapper deliveryRequestMapper) {
         this.deliveryRequestRepository = deliveryRequestRepository;
+        this.deliveryRequestMapper = deliveryRequestMapper;
     }
 
     @Override
-    public List<DeliveryRequest> getDeliveryRequests() {
+    public List<DeliveryRequestDto> getDeliveryRequests() {
         LOG.debug("Getting all delivery requests");
-        return deliveryRequestRepository.getAll();
+        List<DeliveryRequest> deliveryRequests = deliveryRequestRepository.getAll();
+        return deliveryRequestMapper.toDtoList(deliveryRequests);
     }
 
     @Override
-    public DeliveryRequest getDeliveryRequestById(long id) {
+    public DeliveryRequestDto getDeliveryRequestById(long id) {
         LOG.debug("Getting DeliveryRequest(id = {})", id);
-        return deliveryRequestRepository.getById(id)
+        DeliveryRequest deliveryRequest = deliveryRequestRepository.getById(id)
                 .orElseThrow(() -> {
                     LOG.error("DeliveryRequest(id = {}) not found", id);
                     return new ObjectNotFoundException(String.format("DeliveryRequest(id = %s) not found", id));
                 });
+        return deliveryRequestMapper.toDto(deliveryRequest);
     }
 
     @Override
-    public List<DeliveryRequest> getDeliveryRequestsByGoodsId(long goodsId) {
+    public List<DeliveryRequestDto> getDeliveryRequestsByGoodsId(long goodsId) {
         LOG.debug("Getting all delivery requests by Goods(id = {})", goodsId);
-        return deliveryRequestRepository.getDeliveryRequestsByGoodsId(goodsId);
+        List<DeliveryRequest> deliveryRequests = deliveryRequestRepository.getDeliveryRequestsByGoodsId(goodsId);
+        return deliveryRequestMapper.toDtoList(deliveryRequests);
     }
 
     @Override
     @Transactional
-    public DeliveryRequest createDeliveryRequest(DeliveryRequest deliveryRequest) {
+    public DeliveryRequestDto createDeliveryRequest(DeliveryRequestDto deliveryRequestDto) {
+        DeliveryRequest deliveryRequest = deliveryRequestMapper.toEntityIgnoringId(deliveryRequestDto);
         LOG.debug("Creating DeliveryRequest {}", deliveryRequest);
-        return deliveryRequestRepository.save(deliveryRequest)
+        DeliveryRequest createdDeliveryRequest = deliveryRequestRepository.save(deliveryRequest)
                 .orElseThrow(() -> {
                     LOG.error("DeliveryRequest {} cannot be created", deliveryRequest);
                     return new ConflictException(String.format("DeliveryRequest %s cannot be created", deliveryRequest));
                 });
+        return deliveryRequestMapper.toDto(createdDeliveryRequest);
     }
 
     @Override
     @Transactional
-    public void updateDeliveryRequest(DeliveryRequest deliveryRequest) {
+    public void updateDeliveryRequest(DeliveryRequestDto deliveryRequestDto) {
+        DeliveryRequest deliveryRequest = deliveryRequestMapper.toEntity(deliveryRequestDto);
         LOG.debug("Updating DeliveryRequest {}", deliveryRequest);
         deliveryRequestRepository.update(deliveryRequest);
     }

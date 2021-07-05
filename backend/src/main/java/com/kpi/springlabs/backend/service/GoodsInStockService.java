@@ -1,20 +1,20 @@
 package com.kpi.springlabs.backend.service;
 
-import com.kpi.springlabs.backend.model.GoodsInStock;
+import com.kpi.springlabs.backend.model.dto.GoodsInStockDto;
 
 import java.util.List;
 
 public interface GoodsInStockService {
 
-    List<GoodsInStock> getAllGoodsInStocks();
+    List<GoodsInStockDto> getAllGoodsInStocks();
 
-    List<GoodsInStock> getAllGoodsInStock(long stockId);
+    List<GoodsInStockDto> getAllGoodsInStock(long stockId);
 
-    GoodsInStock getCertainGoodsInStock(long stockId, long goodsId);
+    GoodsInStockDto getCertainGoodsInStock(long stockId, long goodsId);
 
-    GoodsInStock createGoodsInStock(GoodsInStock goodsInStock);
+    GoodsInStockDto createGoodsInStock(GoodsInStockDto goodsInStockDto);
 
-    void updateGoodsInStock(GoodsInStock goodsInStock);
+    void updateGoodsInStock(GoodsInStockDto goodsInStockDto);
 
     void deleteGoodsInStock(long id);
 }

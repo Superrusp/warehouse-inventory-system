@@ -1,15 +1,18 @@
 package com.kpi.springlabs.backend.controllers;
 
 import com.kpi.springlabs.backend.aop.TrackExecutionTime;
-import com.kpi.springlabs.backend.model.Goods;
 import com.kpi.springlabs.backend.model.dto.GoodsDto;
+import com.kpi.springlabs.backend.model.dto.response.GoodsNameResponse;
 import com.kpi.springlabs.backend.security.access.AdminPermission;
 import com.kpi.springlabs.backend.service.GoodsService;
+import com.kpi.springlabs.backend.validation.constraints.groups.ExcludeIdValidation;
+import com.kpi.springlabs.backend.validation.constraints.groups.IncludeIdValidation;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,45 +30,46 @@ public class GoodsController {
         this.goodsService = goodsService;
     }
 
-    @ApiOperation(value = "Get all goods", response = Goods.class, responseContainer = "List")
+    @ApiOperation(value = "Get all goods", response = GoodsDto.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Return goods")
     @GetMapping
-    public List<Goods> loadAllGoods() {
+    public List<GoodsDto> loadAllGoods() {
         LOG.debug("Request all goods");
         return goodsService.getAllGoods();
     }
 
-    @ApiOperation(value = "Get goods by id", response = Goods.class)
+    @ApiOperation(value = "Get goods by id", response = GoodsDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Return goods"),
             @ApiResponse(code = 404, message = "Goods not found")
     })
     @GetMapping("/{id}")
-    public Goods getGoods(@ApiParam(value = "Goods Id", required = true) @PathVariable long id) {
+    public GoodsDto getGoods(@ApiParam(value = "Goods Id", required = true) @PathVariable long id) {
         LOG.debug("Request special goods");
         return goodsService.getGoodsById(id);
     }
 
-    @ApiOperation(value = "Get goods by name", response = GoodsDto.class)
+    @ApiOperation(value = "Get goods by name", response = GoodsNameResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Return goods"),
             @ApiResponse(code = 404, message = "Goods not found")
     })
     @GetMapping("/search")
     @TrackExecutionTime
-    public GoodsDto getGoodsByName(@ApiParam(value = "Goods Name", required = true) @RequestParam String name) {
+    public GoodsNameResponse getGoodsByName(@ApiParam(value = "Goods Name", required = true) @RequestParam String name) {
         LOG.debug("Request special goods by its name");
         return goodsService.getGoodsByName(name);
     }
 
-    @ApiOperation(value = "Create goods")
+    @ApiOperation(value = "Create goods", response = GoodsDto.class)
     @ApiResponse(code = 201, message = "Goods created successfully")
     @ResponseStatus(code = HttpStatus.CREATED)
     @AdminPermission
     @PostMapping
-    public Goods createGoods(@ApiParam(value = "Goods", required = true) @RequestBody Goods goods) {
+    public GoodsDto createGoods(@ApiParam(value = "Goods", required = true)
+                                @Validated(ExcludeIdValidation.class) @RequestBody GoodsDto goodsDto) {
         LOG.debug("Request goods creation");
-        return goodsService.createGoods(goods);
+        return goodsService.createGoods(goodsDto);
     }
 
     @ApiOperation(value = "Update goods")
@@ -75,9 +79,10 @@ public class GoodsController {
     })
     @AdminPermission
     @PutMapping
-    public ResponseEntity<?> updateGoods(@ApiParam(value = "Goods", required = true) @RequestBody Goods goods) {
+    public ResponseEntity<?> updateGoods(@ApiParam(value = "Goods", required = true)
+                                         @Validated(IncludeIdValidation.class) @RequestBody GoodsDto goodsDto) {
         LOG.debug("Request goods update");
-        goodsService.updateGoods(goods);
+        goodsService.updateGoods(goodsDto);
         return ResponseEntity.ok("Goods was successfully updated.");
     }
 

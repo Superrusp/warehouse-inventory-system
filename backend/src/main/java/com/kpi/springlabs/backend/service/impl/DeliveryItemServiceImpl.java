@@ -3,12 +3,12 @@ package com.kpi.springlabs.backend.service.impl;
 import com.kpi.springlabs.backend.aop.TrackExecutionTime;
 import com.kpi.springlabs.backend.exception.ConflictException;
 import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
+import com.kpi.springlabs.backend.mappers.DeliveryItemMapper;
 import com.kpi.springlabs.backend.model.DeliveryItem;
 import com.kpi.springlabs.backend.model.dto.DeliveryItemDto;
+import com.kpi.springlabs.backend.model.dto.response.DeliveryItemStatusResponse;
 import com.kpi.springlabs.backend.repository.jpa.DeliveryItemJpaRepository;
 import com.kpi.springlabs.backend.service.DeliveryItemService;
-import com.kpi.springlabs.backend.service.DeliveryRequestService;
-import com.kpi.springlabs.backend.service.GoodsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,54 +21,57 @@ import java.util.List;
 public class DeliveryItemServiceImpl implements DeliveryItemService {
 
     private final DeliveryItemJpaRepository deliveryItemRepository;
-    private final DeliveryRequestService deliveryRequestService;
-    private final GoodsService goodsService;
+    private final DeliveryItemMapper deliveryItemMapper;
 
     @Autowired
-    public DeliveryItemServiceImpl(DeliveryItemJpaRepository deliveryItemRepository, DeliveryRequestService deliveryRequestService,
-                                   GoodsService goodsService) {
+    public DeliveryItemServiceImpl(DeliveryItemJpaRepository deliveryItemRepository,
+                                   DeliveryItemMapper deliveryItemMapper) {
         this.deliveryItemRepository = deliveryItemRepository;
-        this.deliveryRequestService = deliveryRequestService;
-        this.goodsService = goodsService;
+        this.deliveryItemMapper = deliveryItemMapper;
     }
 
     @Override
-    public List<DeliveryItem> getDeliveryItems() {
+    public List<DeliveryItemDto> getDeliveryItems() {
         LOG.debug("Getting all delivery items");
-        return deliveryItemRepository.getAll();
+        List<DeliveryItem> deliveryItems = deliveryItemRepository.getAll();
+        return deliveryItemMapper.toDtoList(deliveryItems);
     }
 
     @Override
-    public DeliveryItem getDeliveryItemById(long id) {
+    public DeliveryItemDto getDeliveryItemById(long id) {
         LOG.debug("Getting DeliveryItem(id = {})", id);
-        return deliveryItemRepository.getById(id)
+        DeliveryItem deliveryItem = deliveryItemRepository.getById(id)
                 .orElseThrow(() -> {
                     LOG.error("DeliveryItem(id = {}) not found", id);
                     return new ObjectNotFoundException(String.format("DeliveryItem(id = %s) not found", id));
                 });
+        return deliveryItemMapper.toDto(deliveryItem);
     }
 
     @Override
     @TrackExecutionTime
-    public List<DeliveryItemDto> getDeliveryItemByDeliveryStatus(String deliveryStatus) {
+    public List<DeliveryItemStatusResponse> getDeliveryItemByDeliveryStatus(String deliveryStatus) {
         LOG.debug("Getting DeliveryItem(deliveryStatus = {})", deliveryStatus);
         return deliveryItemRepository.findDeliveryItemsByDeliveryStatus(deliveryStatus);
     }
 
     @Override
     @Transactional
-    public DeliveryItem createDeliveryItem(DeliveryItem deliveryItem) {
+    public DeliveryItemDto createDeliveryItem(DeliveryItemDto deliveryItemDto) {
+        DeliveryItem deliveryItem = deliveryItemMapper.toEntityIgnoringId(deliveryItemDto);
         LOG.debug("Creating DeliveryItem {}", deliveryItem);
-        return deliveryItemRepository.save(deliveryItem)
+        DeliveryItem createdDeliveryItem = deliveryItemRepository.save(deliveryItem)
                 .orElseThrow(() -> {
                     LOG.error("DeliveryItem {} cannot be created", deliveryItem);
                     return new ConflictException(String.format("DeliveryItem %s cannot be created", deliveryItem));
                 });
+        return deliveryItemMapper.toDto(createdDeliveryItem);
     }
 
     @Override
     @Transactional
-    public void updateDeliveryItem(DeliveryItem deliveryItem) {
+    public void updateDeliveryItem(DeliveryItemDto deliveryItemDto) {
+        DeliveryItem deliveryItem = deliveryItemMapper.toEntity(deliveryItemDto);
         LOG.debug("Updating DeliveryItem {}", deliveryItem);
         deliveryItemRepository.update(deliveryItem);
     }

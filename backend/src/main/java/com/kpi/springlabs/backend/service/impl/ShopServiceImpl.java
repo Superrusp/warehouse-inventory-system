@@ -2,7 +2,9 @@ package com.kpi.springlabs.backend.service.impl;
 
 import com.kpi.springlabs.backend.exception.ConflictException;
 import com.kpi.springlabs.backend.exception.ObjectNotFoundException;
+import com.kpi.springlabs.backend.mappers.ShopMapper;
 import com.kpi.springlabs.backend.model.Shop;
+import com.kpi.springlabs.backend.model.dto.ShopDto;
 import com.kpi.springlabs.backend.repository.jpa.impl.ShopJpaRepositoryImpl;
 import com.kpi.springlabs.backend.service.ShopService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,42 +19,49 @@ import java.util.List;
 public class ShopServiceImpl implements ShopService {
 
     private final ShopJpaRepositoryImpl shopRepository;
+    private final ShopMapper shopMapper;
 
     @Autowired
-    public ShopServiceImpl(ShopJpaRepositoryImpl shopRepository) {
+    public ShopServiceImpl(ShopJpaRepositoryImpl shopRepository, ShopMapper shopMapper) {
         this.shopRepository = shopRepository;
+        this.shopMapper = shopMapper;
     }
 
     @Override
-    public List<Shop> getShops() {
+    public List<ShopDto> getShops() {
         LOG.debug("Getting all shops");
-        return shopRepository.getAll();
+        List<Shop> shops = shopRepository.getAll();
+        return shopMapper.toDtoList(shops);
     }
 
     @Override
-    public Shop getShopById(long id) {
+    public ShopDto getShopById(long id) {
         LOG.debug("Getting Shop(id = {})", id);
-        return shopRepository.getById(id)
+        Shop shop = shopRepository.getById(id)
                 .orElseThrow(() -> {
                     LOG.error("Shop(id = {}) not found", id);
                     return new ObjectNotFoundException(String.format("Shop(id = %s) not found", id));
                 });
+        return shopMapper.toDto(shop);
     }
 
     @Override
     @Transactional
-    public Shop createShop(Shop shop) {
+    public ShopDto createShop(ShopDto shopDto) {
+        Shop shop = shopMapper.toEntityIgnoringId(shopDto);
         LOG.debug("Creating Shop {}", shop);
-        return shopRepository.save(shop)
+        Shop createdShop = shopRepository.save(shop)
                 .orElseThrow(() -> {
                     LOG.error("Shop {} cannot be created", shop);
                     return new ConflictException(String.format("Shop %s cannot be created", shop));
                 });
+        return shopMapper.toDto(createdShop);
     }
 
     @Override
     @Transactional
-    public void updateShop(Shop shop) {
+    public void updateShop(ShopDto shopDto) {
+        Shop shop = shopMapper.toEntity(shopDto);
         LOG.debug("Updating Shop {}", shop);
         shopRepository.update(shop);
     }
