@@ -2,6 +2,10 @@ server:
   port: 8085
 spring:
 
+  # Jackson Configuration
+  jackson:
+    time-zone: GMT+2
+
   # Oracle Configuration
   datasource:
     url: ${DB_URL}
